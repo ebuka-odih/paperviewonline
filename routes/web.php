@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,15 @@ Route::middleware(['splade'])->group(function () {
     // Registers routes to support async File Uploads with Filepond...
     Route::spladeUploads();
 });
+
+// Cart routes (outside splade middleware)
+Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+Route::patch('/cart/update', [CartController::class, 'updateQuantity'])->name('cart.update');
+Route::delete('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+Route::get('/cart', [CartController::class, 'view'])->name('cart.view');
+Route::get('/cart/data', [CartController::class, 'getCart'])->name('cart.get');
+Route::delete('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
+Route::get('/cart/sidebar', [CartController::class, 'sidebar'])->name('cart.sidebar');
 
 require __DIR__.'/auth.php';
 require __DIR__.'/admin.php';
