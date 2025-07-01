@@ -6,6 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
       <meta name="description"
          content="A powerful and conceptual apps base dashboard template that especially build for developers and programmers.">
+      <meta name="csrf-token" content="{{ csrf_token() }}">
       <link rel="shortcut icon" href="/demo2/images/favicon.png">
       <title>{{ env('APP_NAME') }}</title>
       <link rel="stylesheet" href="{{ asset('assets/css/dashlite.css?ver=3.3.0') }}">

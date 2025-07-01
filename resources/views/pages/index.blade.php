@@ -5,15 +5,20 @@
     <header class="sticky top-0 z-50 bg-black bg-opacity-90 w-full flex items-center justify-between px-8 py-4 shadow-md">
         <!-- Logo -->
         <div class="flex items-center">
-            <h1>{{ env('APP_NAME') }}</h1>
+            <h1 style="color: white; font-size: 24px;">{{ env('APP_NAME') }}</h1>
         </div>
         <!-- Center (empty or site name) -->
         <div class="flex-1 text-center">
             <!-- Optionally add site name here -->
+
         </div>
         <!-- Cart -->
         <div class="flex items-center">
-            <a href="#" class="text-white font-semibold hover:text-purple-400 transition-colors">CART</a>
+            <a href="#" class="text-white hover:text-purple-400 transition-colors">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+                </svg>
+            </a>
         </div>
     </header>
 
@@ -29,45 +34,18 @@
 
         <!-- Product Grid -->
         <div class="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-12 px-4 pb-16">
-            @foreach([
-                [
-                    'img' => 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=600&q=80',
-                    'name' => 'Classic Blue Denim Jacket',
-                    'price' => '£120.00 GBP',
-                ],
-                [
-                    'img' => 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=600&q=80',
-                    'name' => 'White Cotton T-Shirt',
-                    'price' => '£30.00 GBP',
-                ],
-                [
-                    'img' => 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
-                    'name' => 'Black Slim Fit Jeans',
-                    'price' => '£80.00 GBP',
-                ],
-                [
-                    'img' => 'https://images.unsplash.com/photo-1469398715555-76331a6c7b29?auto=format&fit=crop&w=600&q=80',
-                    'name' => 'Red Hoodie',
-                    'price' => '£65.00 GBP',
-                ],
-                [
-                    'img' => 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80',
-                    'name' => 'Green Bomber Jacket',
-                    'price' => '£150.00 GBP',
-                ],
-                [
-                    'img' => 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80',
-                    'name' => 'Grey Sweatpants',
-                    'price' => '£55.00 GBP',
-                ],
-            ] as $product)
+            @foreach($products as $product)
                 <div class="flex flex-col items-center bg-black rounded-lg shadow-lg p-6">
-                    <div class="flex items-center justify-center w-[400px] h-[500px] mb-4">
-                        <img src="{{ $product['img'] }}" alt="{{ $product['name'] }}" class="object-contain w-full h-full">
+                    <div class="flex items-center justify-center w-[400px] h-[500px] mb-2">
+                        @php
+                            $firstImage = $product->images()->first();
+                        @endphp
+                        <img src="{{ $firstImage ? $firstImage->url : asset('assets/images/product/placeholder.svg') }}" alt="{{ $product->name }}" class="object-contain w-full h-full">
                     </div>
                     <div class="text-center">
-                        <a href="#" class="text-lg font-bold text-white mb-2 hover:text-purple-400 transition-colors block">{{ $product['name'] }}</a>
-                        <p class="text-gray-300 text-base mb-2">{{ $product['price'] }}</p>
+                        <a href="{{ route('product.show', $product) }}" class="text-lg font-bold text-white mb-2 hover:text-purple-400 transition-colors block">{{ $product->name }}</a>
+                        <p class="text-gray-300 text-base mb-2">£{{ number_format($product->price, 2) }} GBP</p>
+                        <p class="text-xs text-gray-400 uppercase tracking-wide">{{ $product->category->name ?? '' }}</p>
                     </div>
                 </div>
             @endforeach

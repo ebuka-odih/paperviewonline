@@ -69,6 +69,8 @@ class Product extends Model
         return $this->morphMany(Image::class, 'imageable')->orderBy('sort_order');
     }
 
+
+
     public function featuredImage(): MorphMany
     {
         return $this->morphMany(Image::class, 'imageable')->where('is_featured', true);

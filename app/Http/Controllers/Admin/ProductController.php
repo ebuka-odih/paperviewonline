@@ -20,7 +20,9 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products = Product::with(['category', 'featuredImage'])
+        $products = Product::with(['category', 'images' => function($query) {
+            $query->orderBy('sort_order');
+        }])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -50,27 +52,14 @@ class ProductController extends Controller
             'dimensions' => 'nullable|string|max:255',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
-        $data = $request->except(['featured_image', 'images']);
+        $data = $request->except(['images']);
         $data['slug'] = Str::slug($request->name);
 
         // Create the product
         $product = Product::create($data);
-
-        // Handle featured image upload
-        if ($request->hasFile('featured_image')) {
-            $this->imageService->storeImage(
-                $request->file('featured_image'),
-                $product,
-                [
-                    'is_featured' => true,
-                    'alt_text' => $product->name,
-                ]
-            );
-        }
 
         // Handle multiple images upload
         if ($request->hasFile('images')) {
@@ -93,7 +82,7 @@ class ProductController extends Controller
         $product->load(['images' => function($query) {
             $query->orderBy('sort_order');
         }]);
-        
+
         return view('admin.product.edit', compact('product', 'categories'));
     }
 
@@ -103,35 +92,18 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'sale_price' => 'nullable|numeric|min:0|lt:price',
-            'stock' => 'required|integer|min:0',
+            'sale_price' => 'nullable|numeric|min:0',
             'category_id' => 'nullable|exists:categories,id',
-            'sku' => 'nullable|string|unique:products,sku,' . $product->id,
-            'barcode' => 'nullable|string|unique:products,barcode,' . $product->id,
-            'weight' => 'nullable|numeric|min:0',
-            'dimensions' => 'nullable|string|max:255',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
-        $data = $request->except(['featured_image', 'images']);
+        $data = $request->except(['images']);
         $data['slug'] = Str::slug($request->name);
 
         // Update the product
         $product->update($data);
-
-        // Handle featured image upload
-        if ($request->hasFile('featured_image')) {
-            $this->imageService->updateFeaturedImage(
-                $request->file('featured_image'),
-                $product,
-                [
-                    'alt_text' => $product->name,
-                ]
-            );
-        }
 
         // Handle additional images upload
         if ($request->hasFile('images')) {
@@ -162,7 +134,7 @@ class ProductController extends Controller
     public function toggleStatus(Product $product)
     {
         $product->update(['is_active' => !$product->is_active]);
-        
+
         $status = $product->is_active ? 'activated' : 'deactivated';
         return redirect()->route('admin.products.index')
             ->with('success', "Product {$status} successfully.");
@@ -171,7 +143,7 @@ class ProductController extends Controller
     public function toggleFeatured(Product $product)
     {
         $product->update(['is_featured' => !$product->is_featured]);
-        
+
         $status = $product->is_featured ? 'featured' : 'unfeatured';
         return redirect()->route('admin.products.index')
             ->with('success', "Product {$status} successfully.");
@@ -179,14 +151,30 @@ class ProductController extends Controller
 
     public function deleteImage(Request $request, Product $product)
     {
+        \Log::info('Delete image request received', [
+            'product_id' => $product->id,
+            'image_id' => $request->image_id,
+            'request_data' => $request->all()
+        ]);
+
         $request->validate([
             'image_id' => 'required|exists:images,id'
         ]);
 
         $image = $product->images()->findOrFail($request->image_id);
+        
+        if (!$image) {
+            \Log::error('Image not found', ['image_id' => $request->image_id]);
+            return response()->json(['success' => false, 'message' => 'Image not found'], 404);
+        }
+        
+        \Log::info('Deleting image', ['image_id' => $image->id, 'path' => $image->path]);
+        
         $this->imageService->deleteImage($image);
 
-        return response()->json(['success' => true]);
+        \Log::info('Image deleted successfully', ['image_id' => $image->id]);
+
+        return response()->json(['success' => true, 'message' => 'Image deleted successfully']);
     }
 
     public function setFeaturedImage(Request $request, Product $product)
