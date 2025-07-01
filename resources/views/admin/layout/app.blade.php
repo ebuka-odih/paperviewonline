@@ -48,16 +48,11 @@
                               class="nk-menu-link"><span class="nk-menu-icon"><em
                               class="icon ni ni-users-fill"></em></span><span class="nk-menu-text">Customers</span></a>
                            </li>
-                           <li class="nk-menu-item"><a href="/demo2/ecommerce/supports.html" class="nk-menu-link"><span
-                              class="nk-menu-icon"><em class="icon ni ni-chat-fill"></em></span><span
-                              class="nk-menu-text">Supports</span></a></li>
+
                            <li class="nk-menu-item"><a href="/demo2/ecommerce/settings.html" class="nk-menu-link"><span
                               class="nk-menu-icon"><em class="icon ni ni-opt-alt-fill"></em></span><span
                               class="nk-menu-text">Settings</span></a></li>
-                           <li class="nk-menu-item"><a href="/demo2/ecommerce/integration.html"
-                              class="nk-menu-link"><span class="nk-menu-icon"><em
-                              class="icon ni ni-server-fill"></em></span><span class="nk-menu-text">Integration</span></a>
-                           </li>
+
                            <li class="nk-menu-heading">
                               <h6 class="overline-title text-primary-alt">Return to</h6>
                            </li>
@@ -162,12 +157,12 @@
                   </div>
                </div>
                @yield('content')
-               
+
                <!-- Logout Form -->
                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                    @csrf
                </form>
-               
+
                <div class="nk-footer">
                   <div class="container-fluid">
                      <div class="nk-footer-wrap">
@@ -626,12 +621,12 @@
       <script src="{{ asset('assets/js/scripts.js?ver=3.3.0') }}"></script>
       <script src="{{ asset('assets/js/demo-settings.js?ver=3.3.0') }}"></script>
       <script src="{{ asset('assets/js/charts/chart-ecommerce.js?ver=3.3.0') }}"></script>
-      
+
       <!-- jQuery and Bootstrap JS for modal functionality -->
       <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
-      
+
       @stack('scripts')
    </body>
 </html>

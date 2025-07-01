@@ -24,7 +24,9 @@ class ProductController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('admin.product.index', compact('products'));
+        $categories = Category::where('is_active', true)->get();
+
+        return view('admin.product.index', compact('products', 'categories'));
     }
 
     public function create()
