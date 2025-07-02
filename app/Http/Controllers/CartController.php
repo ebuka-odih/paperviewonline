@@ -76,7 +76,7 @@ class CartController extends Controller
     {
         $request->validate([
             'product_id' => 'required|string',
-            'quantity' => 'required|integer|min:1',
+            'action' => 'required|in:increase,decrease',
         ]);
 
         $product = Product::find($request->product_id);
@@ -91,12 +91,25 @@ class CartController extends Controller
             return back()->with('cart_error', 'Product not found in cart.');
         }
 
-        // Check if quantity exceeds stock
-        if ($request->quantity > $product->stock) {
-            return back()->with('cart_error', 'Cannot update quantity. Only ' . $product->stock . ' items available.');
+        $currentQuantity = $cart[$productId]['quantity'];
+        
+        if ($request->action === 'increase') {
+            $newQuantity = $currentQuantity + 1;
+            // Check if new quantity exceeds stock
+            if ($newQuantity > $product->stock) {
+                return back()->with('cart_error', 'Cannot increase quantity. Only ' . $product->stock . ' items available.');
+            }
+        } else {
+            $newQuantity = $currentQuantity - 1;
+            // If quantity becomes 0, remove the item
+            if ($newQuantity <= 0) {
+                unset($cart[$productId]);
+                Session::put('cart', $cart);
+                return back()->with('cart_message', 'Item removed from cart.');
+            }
         }
 
-        $cart[$productId]['quantity'] = $request->quantity;
+        $cart[$productId]['quantity'] = $newQuantity;
         Session::put('cart', $cart);
 
         return back()->with('cart_message', 'Quantity updated successfully!');
