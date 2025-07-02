@@ -74,6 +74,13 @@ class CartController extends Controller
 
     public function updateQuantity(Request $request)
     {
+        // Debug the incoming request
+        \Log::info('Update quantity request', [
+            'all_data' => $request->all(),
+            'product_id' => $request->product_id,
+            'action' => $request->action
+        ]);
+
         $request->validate([
             'product_id' => 'required|string',
             'action' => 'required|in:increase,decrease',
@@ -117,6 +124,12 @@ class CartController extends Controller
 
     public function removeFromCart(Request $request)
     {
+        // Debug the incoming request
+        \Log::info('Remove from cart request', [
+            'all_data' => $request->all(),
+            'product_id' => $request->product_id
+        ]);
+
         $request->validate([
             'product_id' => 'required|string',
         ]);
@@ -189,6 +202,14 @@ class CartController extends Controller
         $cart = Session::get('cart', []);
         $cartCount = $this->getCartCount();
         $cartTotal = $this->getCartTotal();
+        
+        // Debug the cart data being passed to the view
+        \Log::info('Cart sidebar data', [
+            'cart' => $cart,
+            'cart_count' => $cartCount,
+            'cart_total' => $cartTotal
+        ]);
+        
         return view('pages.cart-sidebar', compact('cart', 'cartCount', 'cartTotal'));
     }
 } 
