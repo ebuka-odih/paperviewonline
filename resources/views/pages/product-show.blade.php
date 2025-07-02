@@ -134,8 +134,8 @@
                                     <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ $product->stock }}" class="w-16 text-center bg-transparent text-white border-none focus:outline-none">
                                     <button id="increaseQty" type="button" class="px-4 py-2 text-white hover:bg-gray-800 transition-colors">+</button>
                                 </div>
-                                <span class="text-gray-400 text-sm">of {{ $product->stock }} available</span>
-                                <span class="text-xs text-gray-500">Form Qty: <span id="debugQuantity">1</span></span>
+{{--                                <span class="text-gray-400 text-sm">of {{ $product->stock }} available</span>--}}
+{{--                                <span class="text-xs text-gray-500">Form Qty: <span id="debugQuantity">1</span></span>--}}
                             </div>
                             <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
