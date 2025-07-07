@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,9 @@ Route::middleware(['splade'])->group(function () {
     Route::get('/cart/data', [CartController::class, 'getCart'])->name('cart.get');
     Route::delete('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
     Route::get('/cart/sidebar', [CartController::class, 'sidebar'])->name('cart.sidebar');
+
+    Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
 });
 
 // Cart routes (outside splade middleware)
