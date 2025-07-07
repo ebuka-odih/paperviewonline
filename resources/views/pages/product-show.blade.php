@@ -52,10 +52,10 @@
 
                 <!-- Thumbnail Navigation -->
                 @if($productImages->count() > 1)
-                    <div class="flex space-x-2 overflow-x-auto pb-2">
+                    <div class="flex space-x-2 mt-4">
                         @foreach($productImages as $index => $image)
-                            <button class="thumbnail-btn flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 {{ $index === 0 ? 'border-purple-500' : 'border-gray-700' }} hover:border-purple-400 transition-colors" data-index="{{ $index }}">
-                                <img src="{{ $image->url }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                            <button type="button" class="w-16 h-16 rounded border-2 {{ $index === 0 ? 'border-[#65644A]' : 'border-gray-700' }} hover:border-[#65644A] transition-colors" data-index="{{ $index }}">
+                                <img src="{{ $image->url }}" alt="{{ $product->name }}" class="w-full h-full object-cover rounded">
                             </button>
                         @endforeach
                     </div>
@@ -71,7 +71,7 @@
                 @if($product->category)
                     <div class="flex items-center space-x-2">
                         <span class="text-gray-400">Category:</span>
-                        <span class="text-purple-400 font-medium">{{ $product->category->name }}</span>
+                        <span class="text-[#65644A] font-medium">{{ $product->category->name }}</span>
                     </div>
                 @endif
 
@@ -137,10 +137,8 @@
 {{--                                <span class="text-gray-400 text-sm">of {{ $product->stock }} available</span>--}}
 {{--                                <span class="text-xs text-gray-500">Form Qty: <span id="debugQuantity">1</span></span>--}}
                             </div>
-                            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
-                                </svg>
+                            <button type="submit" class="w-full bg-[#65644A] hover:bg-[#65644A] text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.45A1 1 0 007 17h12m-5 4a2 2 0 100-4 2 2 0 000 4zm-6 0a2 2 0 100-4 2 2 0 000 4z" /></svg>
                                 <span>Add to Cart</span>
                             </button>
                         </form>
@@ -175,7 +173,7 @@
 
             // Update thumbnail selection
             document.querySelectorAll('.thumbnail-btn').forEach((btn, i) => {
-                btn.classList.toggle('border-purple-500', i === index);
+                btn.classList.toggle('border-[#65644A]', i === index);
                 btn.classList.toggle('border-gray-700', i !== index);
             });
         }

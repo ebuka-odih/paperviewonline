@@ -23,7 +23,7 @@
                     <img src="{{ $firstImage ? $firstImage->url : asset('assets/images/product/placeholder.svg') }}" alt="{{ $product->name }}" class="object-contain w-full h-full">
                 </div>
                 <div class="text-center">
-                    <a href="{{ route('product.show', $product) }}" class="text-lg font-bold text-white mb-2 hover:text-purple-400 transition-colors block">{{ $product->name }}</a>
+                    <a href="{{ route('product.show', $product) }}" class="text-lg font-bold text-white mb-2 hover:text-[#65644A] transition-colors block">{{ $product->name }}</a>
                     <p class="text-gray-300 text-base mb-2">£{{ number_format($product->price, 2) }} GBP</p>
                     <p class="text-xs text-gray-400 uppercase tracking-wide">{{ $product->category->name ?? '' }}</p>
                 </div>

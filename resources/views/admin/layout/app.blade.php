@@ -45,6 +45,9 @@
                             <li class="nk-menu-item"><a href="{{ route('admin.categories.index')}}" class="nk-menu-link"><span
                               class="nk-menu-icon"><em class="icon ni ni-tag-fill"></em></span><span
                               class="nk-menu-text">Categories</span></a></li>
+                           <li class="nk-menu-item"><a href="{{ route('admin.coming-soon.index')}}" class="nk-menu-link"><span
+                              class="nk-menu-icon"><em class="icon ni ni-clock"></em></span><span
+                              class="nk-menu-text">Coming Soon</span></a></li>
                            <li class="nk-menu-item"><a href="/demo2/ecommerce/customers.html"
                               class="nk-menu-link"><span class="nk-menu-icon"><em
                               class="icon ni ni-users-fill"></em></span><span class="nk-menu-text">Customers</span></a>

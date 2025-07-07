@@ -12,7 +12,7 @@
                         
                         <div class="flex-1 min-w-0">
                             <div class="font-semibold text-base truncate">{{ $item['name'] }}</div>
-                            <div class="text-purple-400 font-bold">${{ number_format($item['price'], 2) }}</div>
+                            <div class="text-[#65644A] font-bold">${{ number_format($item['price'], 2) }}</div>
                         </div>
                         
                         <div class="flex flex-col items-end gap-2">
@@ -48,10 +48,10 @@
             <div class="border-t border-gray-700 pt-4 mt-4">
                 <div class="flex justify-between items-center mb-4">
                     <span class="text-lg font-semibold">Total:</span>
-                    <span class="text-xl font-bold text-purple-400">${{ number_format($cartTotal, 2) }}</span>
+                    <span class="text-xl font-bold text-[#65644A]">${{ number_format($cartTotal, 2) }}</span>
                 </div>
                 <a href="{{ route('cart.index') }}" 
-                   class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-colors text-center block">
+                   class="w-full bg-[#65644A] hover:bg-[#65644A] text-white font-bold py-3 px-4 rounded-lg transition-colors text-center block">
                     Checkout
                 </a>
             </div>
@@ -63,7 +63,7 @@
                 </svg>
                 <div class="text-lg font-semibold mb-2">Your cart is empty</div>
                 <div class="text-gray-400 text-sm mb-4">Add some products to your cart to see them here.</div>
-                <a href="{{ route('index') }}" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">Continue Shopping</a>
+                <a href="{{ route('index') }}" class="bg-[#65644A] hover:bg-[#65644A] text-white font-bold py-2 px-6 rounded-lg transition-colors">Continue Shopping</a>
             </div>
         @endif
     </div>

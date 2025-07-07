@@ -7,7 +7,7 @@
     <header class="sticky top-0 z-50 bg-black bg-opacity-90 w-full flex items-center justify-between px-8 py-4 shadow-md">
         <!-- Logo -->
         <div class="flex items-center">
-            <a href="{{ route('index') }}" class="text-white hover:text-purple-400 transition-colors">
+            <a href="{{ route('index') }}" class="text-white hover:text-[#65644A] transition-colors">
                 <h1>{{ env('APP_NAME') }}</h1>
             </a>
         </div>
@@ -17,7 +17,7 @@
         </div>
         <!-- Cart -->
         <div class="flex items-center">
-            <a href="{{ route('cart.view') }}" class="text-white hover:text-purple-400 transition-colors">
+            <a href="{{ route('cart.view') }}" class="text-white hover:text-[#65644A] transition-colors">
                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
                 </svg>
@@ -69,7 +69,7 @@
                             <div class="flex-1">
                                 <h3 class="text-lg font-semibold text-white">{{ $item['name'] }}</h3>
                                 <p class="text-gray-400 text-sm">SKU: {{ $item['id'] }}</p>
-                                <p class="text-purple-400 font-medium">£{{ number_format($item['price'], 2) }}</p>
+                                <p class="text-[#65644A] font-medium">£{{ number_format($item['price'], 2) }}</p>
                             </div>
 
                             <!-- Quantity Controls -->
@@ -152,7 +152,7 @@
                     </div>
 
                     <div class="space-y-3">
-                        <button class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors">
+                        <button class="w-full bg-[#65644A] hover:bg-[#65644A] text-white font-semibold py-4 px-6 rounded-lg transition-colors">
                             Proceed to Checkout
                         </button>
                         <a href="{{ route('index') }}" class="block w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-center">
@@ -168,7 +168,7 @@
                     </svg>
                     <h2 class="text-2xl font-semibold text-white mb-4">Your cart is empty</h2>
                     <p class="text-gray-400 mb-8">Looks like you haven't added any items to your cart yet.</p>
-                    <a href="{{ route('index') }}" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                    <a href="{{ route('index') }}" class="bg-[#65644A] hover:bg-[#65644A] text-white font-semibold py-3 px-6 rounded-lg transition-colors">
                         Start Shopping
                     </a>
                 </div>
@@ -179,11 +179,11 @@
     <!-- Footer Menu -->
     <footer class="w-full bg-black bg-opacity-90 py-4">
         <div class="flex flex-wrap justify-center items-center gap-8 text-white text-sm font-semibold">
-            <a href="#" class="hover:text-purple-400 transition-colors">HELP</a>
-            <a href="#" class="hover:text-purple-400 transition-colors">PRIVACY</a>
-            <a href="#" class="hover:text-purple-400 transition-colors">TERMS</a>
-            <a href="#" class="hover:text-purple-400 transition-colors">DO NOT SELL MY PERSONAL INFORMATION</a>
-            <a href="#" class="hover:text-purple-400 transition-colors">ACCESSIBILITY</a>
+            <a href="#" class="hover:text-[#65644A] transition-colors">HELP</a>
+            <a href="#" class="hover:text-[#65644A] transition-colors">PRIVACY</a>
+            <a href="#" class="hover:text-[#65644A] transition-colors">TERMS</a>
+            <a href="#" class="hover:text-[#65644A] transition-colors">DO NOT SELL MY PERSONAL INFORMATION</a>
+            <a href="#" class="hover:text-[#65644A] transition-colors">ACCESSIBILITY</a>
         </div>
     </footer>
 </x-splade-layout> 

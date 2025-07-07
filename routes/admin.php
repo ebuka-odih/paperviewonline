@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ComingSoonController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -41,4 +42,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
     Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+    // Coming Soon routes
+    Route::get('/coming-soon', [ComingSoonController::class, 'index'])->name('coming-soon.index');
+    Route::put('/coming-soon', [ComingSoonController::class, 'update'])->name('coming-soon.update');
+    Route::patch('/coming-soon/toggle', [ComingSoonController::class, 'toggle'])->name('coming-soon.toggle');
 });
