@@ -14,113 +14,72 @@
     @endphp
 
     @if($settings['enabled'])
-    <!-- Coming Soon Popover Modal -->
-    <div x-data="comingSoonModal()" 
-         x-show="isVisible" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 scale-95"
-         x-transition:enter-end="opacity-100 scale-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 scale-100"
-         x-transition:leave-end="opacity-0 scale-95"
-         class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm">
-        <div class="relative w-full max-w-lg mx-4 my-2 sm:my-8">
-            <!-- Modal Container -->
-            <div class="bg-black rounded-2xl shadow-2xl overflow-hidden border border-[#65644A] text-white max-h-[98vh] sm:max-h-[90vh] py-4 sm:py-8 overflow-y-auto">
-                <!-- Header with Brand -->
-                <div class="px-6 py-4" style="background: linear-gradient(90deg, #65644A 0%, #65644A 100%);">
-                    <div class="flex items-center justify-center">
-                        <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center mr-3">
-                            <svg class="w-6 h-6 text-[#65644A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                            </svg>
-                        </div>
-                        <h1 class="text-2xl font-bold text-white">{{ config('app.name', 'PaperView Online') }}</h1>
-                    </div>
-                </div>
-
-                <!-- Content -->
-                <div class="p-6">
-                    <!-- Message -->
-                    <div class="text-center mb-6">
-                        <h2 class="text-xl font-semibold text-white mb-3">Coming Soon</h2>
-                        <p class="text-white leading-relaxed">
-                            {{ $settings['message'] }}
-                        </p>
-                    </div>
-
-                    <!-- Password Section (only if password is set) -->
-                    @if(!empty($settings['password']))
-                    <div class="space-y-4">
-                        <div class="border-t border-[#65644A] pt-4">
-                            <p class="text-sm text-[#bdbdbd] mb-3 text-center">Have access? Enter the password to continue</p>
-                            <div class="space-y-3">
-                                <input 
-                                    type="password" 
-                                    x-model="password"
-                                    @keyup.enter="checkPassword()"
-                                    :placeholder="error ? 'Incorrect password' : 'Enter password'"
-                                    :class="error ? 'border-red-500 bg-red-50' : 'border-[#65644A]'"
-                                    class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#65644A] focus:border-transparent text-black placeholder-gray-400 transition-colors"
-                                >
-                                <button 
-                                    @click="checkPassword()"
-                                    class="w-full bg-[#65644A] text-white font-semibold py-3 px-6 rounded-lg hover:bg-[#65644A] focus:bg-[#65644A] transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-[#65644A] focus:ring-offset-2"
-                                >
-                                    Access Site
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    @else
-                    <!-- No password set - just show message -->
-                    <div class="text-center">
-                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#65644A]/30 mb-4">
-                            <svg class="w-8 h-8 text-[#65644A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <p class="text-sm text-[#bdbdbd]">We'll be back soon with something amazing!</p>
-                    </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-    function comingSoonModal() {
-        return {
+    <!-- Coming Soon Full-Page Cover -->
+    <div x-data="{
             isVisible: true,
+            showPassword: false,
             password: '',
+            email: '',
             error: false,
-            correctPassword: '{{ $settings['password'] }}',
-            
+            correctPassword: @js($settings['password']),
             init() {
-                // Check if user has already bypassed
                 if (sessionStorage.getItem('coming-soon-bypassed') === 'true') {
                     this.isVisible = false;
                 }
             },
-            
             checkPassword() {
                 if (this.password === this.correctPassword) {
-                    // Store in session storage to remember the bypass
                     sessionStorage.setItem('coming-soon-bypassed', 'true');
-                    // Hide the modal
                     this.isVisible = false;
                 } else {
-                    // Show error
                     this.error = true;
                     this.password = '';
-                    setTimeout(() => {
-                        this.error = false;
-                    }, 2000);
+                    setTimeout(() => { this.error = false; }, 2000);
                 }
+            },
+            submitEmail() {
+                // TODO: Implement email submission logic (AJAX or form post)
+                alert('Thank you! You will be notified.');
+                this.email = '';
             }
-        }
-    }
-    </script>
+        }"
+        x-show="isVisible"
+        x-init="init"
+        class="fixed inset-0 z-[9999] flex flex-col min-h-screen min-w-full bg-black text-white">
+        <!-- Logo -->
+        <div class="flex items-center p-8">
+            <img src="/img/logo.png" alt="Logo" class="h-28 w-auto mr-4" style="object-fit:contain;" />
+        </div>
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col items-center justify-start px-4 mt-24">
+            <div class="w-full max-w-md flex flex-col items-center">
+                <div class="mb-8 text-center mt-2">
+                    <p class="text-lg md:text-xl font-mono tracking-wide mb-6">{{ strtoupper($settings['message']) }}</p>
+                </div>
+                <!-- Password Toggle -->
+                <div class="mb-6 w-full flex flex-col items-center">
+                    <button @click="showPassword = !showPassword" class="flex items-center gap-2 text-white text-base font-mono underline mb-4 focus:outline-none">
+                        <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0-1.104.896-2 2-2s2 .896 2 2-.896 2-2 2-2-.896-2-2zm0 0V7m0 4v4m0-4h4m-4 0H8"/></svg>
+                        <span>ENTER USING PASSWORD</span>
+                    </button>
+                    <template x-if="showPassword">
+                        <div class="w-full flex flex-col items-center">
+                            <input type="password" x-model="password" @keyup.enter="checkPassword()" :placeholder="error ? 'Incorrect password' : 'Enter password'" :class="error ? 'border-red-500 bg-red-50 text-black' : 'border-[#65644A]'" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#65644A] focus:border-transparent text-black placeholder-gray-400 transition-colors mb-3" />
+                            <button @click="checkPassword()" class="w-full bg-[#65644A] text-white font-bold py-3 px-6 rounded-lg hover:bg-[#65644A]/90 focus:bg-[#65644A] transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-[#65644A] focus:ring-offset-2">Access Site</button>
+                        </div>
+                    </template>
+                </div>
+                <!-- Email Signup -->
+                <div class="w-full flex flex-col items-center mt-4">
+                    <p class="text-center text-base font-mono mb-3">BE THE FIRST TO RECEIVE THE PASSWORD WHEN '{{ strtoupper(config('app.name', 'PaperView Online')) }}' DROPS</p>
+                    <div class="flex w-full flex-col sm:flex-row gap-2 items-center">
+                        <input type="email" x-model="email" placeholder="EMAIL" class="flex-1 px-4 py-3 border border-white rounded-lg bg-transparent text-white placeholder-white font-mono focus:outline-none focus:ring-2 focus:ring-[#65644A] focus:border-transparent" />
+                        <button @click="submitEmail()" class="mt-2 sm:mt-0 w-full sm:w-auto bg-army text-white font-bold py-3 px-8 rounded-lg hover:bg-army focus:bg-army transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-army focus:ring-offset-2">SEND</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     @endif
 
     <!-- Sticky Header -->

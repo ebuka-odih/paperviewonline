@@ -15,7 +15,11 @@ export default {
     ],
 
     theme: {
-        extend: {},
+        extend: {
+            colors: {
+                army: '#65644A',
+            },
+        },
     },
 
     plugins: [forms, typography],
