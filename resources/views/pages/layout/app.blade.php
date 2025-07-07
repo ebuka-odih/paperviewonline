@@ -3,11 +3,11 @@
         @yield('title', env('APP_NAME'))
     </x-slot>
 
+    <!-- Alpine.js for interactivity - Load before Splade -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <!-- Vite Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <!-- Alpine.js for interactivity -->
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
     @php
         $settings = App\Models\Setting::getComingSoonSettings();
@@ -15,66 +15,98 @@
 
     @if($settings['enabled'])
     <!-- Coming Soon Full-Page Cover -->
-    <div x-data="{
-            isVisible: true,
-            showPassword: false,
-            password: '',
-            email: '',
-            error: false,
-            correctPassword: @js($settings['password']),
-            init() {
+    <div id="coming-soon-modal" class="fixed inset-0 z-[9999] flex flex-col min-h-screen min-w-full bg-black text-white">
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const modal = document.getElementById('coming-soon-modal');
+                const passwordToggle = document.getElementById('password-toggle');
+                const passwordSection = document.getElementById('password-section');
+                const passwordInput = document.getElementById('password-input');
+                const accessButton = document.getElementById('access-button');
+                const emailInput = document.getElementById('email-input');
+                const sendButton = document.getElementById('send-button');
+                
+                const correctPassword = @js($settings['password']);
+                let showPassword = false;
+                let error = false;
+                
+                // Check if already bypassed
                 if (sessionStorage.getItem('coming-soon-bypassed') === 'true') {
-                    this.isVisible = false;
+                    modal.style.display = 'none';
                 }
-            },
-            checkPassword() {
-                if (this.password === this.correctPassword) {
-                    sessionStorage.setItem('coming-soon-bypassed', 'true');
-                    this.isVisible = false;
-                } else {
-                    this.error = true;
-                    this.password = '';
-                    setTimeout(() => { this.error = false; }, 2000);
+                
+                // Password toggle
+                passwordToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showPassword = !showPassword;
+                    passwordSection.style.display = showPassword ? 'flex' : 'none';
+                    console.log('Password toggle clicked, showPassword:', showPassword);
+                });
+                
+                // Check password
+                function checkPassword() {
+                    const password = passwordInput.value;
+                    if (password === correctPassword) {
+                        sessionStorage.setItem('coming-soon-bypassed', 'true');
+                        modal.style.display = 'none';
+                    } else {
+                        error = true;
+                        passwordInput.value = '';
+                        passwordInput.placeholder = 'Incorrect password';
+                        passwordInput.classList.add('border-red-500', 'bg-red-50');
+                        setTimeout(() => {
+                            error = false;
+                            passwordInput.placeholder = 'Enter password';
+                            passwordInput.classList.remove('border-red-500', 'bg-red-50');
+                        }, 2000);
+                    }
                 }
-            },
-            submitEmail() {
-                // TODO: Implement email submission logic (AJAX or form post)
-                alert('Thank you! You will be notified.');
-                this.email = '';
-            }
-        }"
-        x-show="isVisible"
-        x-init="init"
-        class="fixed inset-0 z-[9999] flex flex-col min-h-screen min-w-full bg-black text-white">
+                
+                // Access button
+                accessButton.addEventListener('click', checkPassword);
+                
+                // Enter key on password input
+                passwordInput.addEventListener('keyup', function(e) {
+                    if (e.key === 'Enter') {
+                        checkPassword();
+                    }
+                });
+                
+                // Email submission
+                sendButton.addEventListener('click', function() {
+                    alert('Thank you! You will be notified.');
+                    emailInput.value = '';
+                });
+            });
+        </script>
         <!-- Logo -->
         <div class="flex items-center p-8">
-            <img src="/img/logo.png" alt="Logo" class="h-28 w-auto mr-4" style="object-fit:contain;" />
+            <img src="/img/logo.png" alt="Logo" class="h-40 w-auto mr-4" style="object-fit:contain;" />
         </div>
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col items-center justify-start px-4 mt-24">
+        <div class="flex-1 flex flex-col items-center justify-start px-4 mt-8">
             <div class="w-full max-w-md flex flex-col items-center">
                 <div class="mb-8 text-center mt-2">
                     <p class="text-lg md:text-xl font-mono tracking-wide mb-6">{{ strtoupper($settings['message']) }}</p>
                 </div>
                 <!-- Password Toggle -->
                 <div class="mb-6 w-full flex flex-col items-center">
-                    <button @click="showPassword = !showPassword" class="flex items-center gap-2 text-white text-base font-mono underline mb-4 focus:outline-none">
+                    <button id="password-toggle" type="button" class="flex items-center gap-2 text-white text-base font-mono underline mb-4 focus:outline-none">
                         <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0-1.104.896-2 2-2s2 .896 2 2-.896 2-2 2-2-.896-2-2zm0 0V7m0 4v4m0-4h4m-4 0H8"/></svg>
                         <span>ENTER USING PASSWORD</span>
                     </button>
-                    <template x-if="showPassword">
-                        <div class="w-full flex flex-col items-center">
-                            <input type="password" x-model="password" @keyup.enter="checkPassword()" :placeholder="error ? 'Incorrect password' : 'Enter password'" :class="error ? 'border-red-500 bg-red-50 text-black' : 'border-[#65644A]'" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#65644A] focus:border-transparent text-black placeholder-gray-400 transition-colors mb-3" />
-                            <button @click="checkPassword()" class="w-full bg-[#65644A] text-white font-bold py-3 px-6 rounded-lg hover:bg-[#65644A]/90 focus:bg-[#65644A] transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-[#65644A] focus:ring-offset-2">Access Site</button>
-                        </div>
-                    </template>
+                    <div id="password-section" class="w-full flex flex-col items-center" style="display: none;">
+                        <input id="password-input" type="password" placeholder="Enter password" class="w-full px-4 py-3 border border-[#65644A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#65644A] focus:border-transparent text-black placeholder-gray-400 transition-colors mb-3" />
+                        <button id="access-button" class="w-full bg-[#65644A] text-white font-bold py-3 px-6 rounded-lg hover:bg-[#65644A]/90 focus:bg-[#65644A] transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-[#65644A] focus:ring-offset-2">Access Site</button>
+                    </div>
                 </div>
                 <!-- Email Signup -->
                 <div class="w-full flex flex-col items-center mt-4">
                     <p class="text-center text-base font-mono mb-3">BE THE FIRST TO RECEIVE THE PASSWORD WHEN '{{ strtoupper(config('app.name', 'PaperView Online')) }}' DROPS</p>
                     <div class="flex w-full flex-col sm:flex-row gap-2 items-center">
-                        <input type="email" x-model="email" placeholder="EMAIL" class="flex-1 px-4 py-3 border border-white rounded-lg bg-transparent text-white placeholder-white font-mono focus:outline-none focus:ring-2 focus:ring-[#65644A] focus:border-transparent" />
-                        <button @click="submitEmail()" class="mt-2 sm:mt-0 w-full sm:w-auto bg-army text-white font-bold py-3 px-8 rounded-lg hover:bg-army focus:bg-army transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-army focus:ring-offset-2">SEND</button>
+                        <input id="email-input" type="email" placeholder="EMAIL" class="flex-1 px-4 py-3 border border-white rounded-lg bg-transparent text-white placeholder-white font-mono focus:outline-none focus:ring-2 focus:ring-[#65644A] focus:border-transparent" />
+                        <button id="send-button" class="mt-2 sm:mt-0 w-full sm:w-auto bg-army text-white font-bold py-3 px-8 rounded-lg hover:bg-army focus:bg-army transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-army focus:ring-offset-2">SEND</button>
                     </div>
                 </div>
             </div>
