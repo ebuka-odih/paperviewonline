@@ -85,10 +85,10 @@
             <img src="/img/logo.png" alt="Logo" class="h-40 w-auto mr-4" style="object-fit:contain;" />
         </div>
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col items-center justify-start px-4 mt-8">
+        <div class="flex-1 flex flex-col items-center justify-start px-4 mt-2">
             <div class="w-full max-w-md flex flex-col items-center">
-                <div class="mb-8 text-center mt-2">
-                    <p class="text-lg md:text-xl font-mono tracking-wide mb-6">{{ strtoupper($settings['message']) }}</p>
+                <div class="mb-6 text-center mt-0">
+                    <p class="text-lg md:text-xl font-mono tracking-wide mb-4">{{ strtoupper($settings['message']) }}</p>
                 </div>
                 <!-- Password Toggle -->
                 <div class="mb-6 w-full flex flex-col items-center">
