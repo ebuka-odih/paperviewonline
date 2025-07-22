@@ -1,4 +1,4 @@
-<x-splade-layout>
+<x-splade-layout class="h-screen overflow-hidden">
     <x-slot:title>
         @yield('title', env('APP_NAME'))
     </x-slot>
@@ -140,7 +140,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="min-h-screen bg-black pt-8 pb-32">
+    <main class="h-screen bg-black pt-8 pb-32 overflow-hidden">
         @yield('content')
     </main>
 
