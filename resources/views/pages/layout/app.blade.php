@@ -6,6 +6,51 @@
     <!-- Alpine.js for interactivity - Load before Splade -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+    <!-- Mobile Browser Fixes -->
+    <style>
+        /* Prevent mobile browser white space and overscroll */
+        html, body {
+            height: 100vh;
+            height: 100dvh; /* Dynamic viewport height for mobile */
+            overflow: hidden;
+            background: black;
+            position: fixed;
+            width: 100%;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Ensure Splade layout covers full viewport */
+        [data-splade] {
+            height: 100vh;
+            height: 100dvh;
+            background: black;
+            overflow: hidden;
+        }
+        
+        /* Prevent any white background flashes */
+        * {
+            background-color: inherit;
+        }
+        
+        /* Mobile-specific fixes */
+        @media (max-width: 768px) {
+            html, body {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                overflow: hidden;
+            }
+            
+            /* Prevent pull-to-refresh and overscroll */
+            body {
+                overscroll-behavior: none;
+                -webkit-overflow-scrolling: auto;
+            }
+        }
+    </style>
+
     <!-- Vite Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -157,4 +202,58 @@
 
     @yield('scripts')
     <x-splade-flash />
+    
+    <!-- Mobile Browser Behavior Prevention -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Prevent pull-to-refresh
+            document.body.style.overscrollBehavior = 'none';
+            
+            // Prevent touch scrolling on body
+            document.body.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+            
+            // Prevent any scroll events
+            window.addEventListener('scroll', function(e) {
+                e.preventDefault();
+                window.scrollTo(0, 0);
+            }, { passive: false });
+            
+            // Prevent zoom gestures
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+            });
+            
+            document.addEventListener('gesturechange', function(e) {
+                e.preventDefault();
+            });
+            
+            document.addEventListener('gestureend', function(e) {
+                e.preventDefault();
+            });
+            
+            // Set viewport meta tag programmatically
+            const viewport = document.querySelector('meta[name="viewport"]');
+            if (viewport) {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+            }
+            
+            // Force black background on all elements
+            document.documentElement.style.backgroundColor = 'black';
+            document.body.style.backgroundColor = 'black';
+            
+            // Prevent any white flashes during page load
+            document.addEventListener('visibilitychange', function() {
+                document.body.style.backgroundColor = 'black';
+            });
+        });
+        
+        // Additional mobile fixes
+        if ('ontouchstart' in window) {
+            // Mobile device detected
+            document.documentElement.style.touchAction = 'none';
+            document.body.style.touchAction = 'none';
+        }
+    </script>
 </x-splade-layout>
