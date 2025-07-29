@@ -1,4 +1,4 @@
-<x-splade-layout class="h-screen overflow-hidden">
+<x-splade-layout class="min-h-screen bg-black">
     <x-slot:title>
         @yield('title', env('APP_NAME'))
     </x-slot>
@@ -8,23 +8,16 @@
 
     <!-- Mobile Browser Fixes -->
     <style>
-        /* Prevent mobile browser white space and overscroll */
+        /* Ensure black background */
         html, body {
-            height: 100vh;
-            height: 100dvh; /* Dynamic viewport height for mobile */
-            overflow: hidden;
             background: black;
-            position: fixed;
-            width: 100%;
-            -webkit-overflow-scrolling: touch;
+            min-height: 100vh;
         }
         
         /* Ensure Splade layout covers full viewport */
         [data-splade] {
-            height: 100vh;
-            height: 100dvh;
             background: black;
-            overflow: hidden;
+            min-height: 100vh;
         }
         
         /* Prevent any white background flashes */
@@ -35,18 +28,12 @@
         /* Mobile-specific fixes */
         @media (max-width: 768px) {
             html, body {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                overflow: hidden;
+                background: black;
             }
             
-            /* Prevent pull-to-refresh and overscroll */
+            /* Prevent pull-to-refresh but allow scrolling */
             body {
-                overscroll-behavior: none;
-                -webkit-overflow-scrolling: auto;
+                overscroll-behavior: contain;
             }
         }
     </style>
@@ -185,7 +172,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="h-screen bg-black pt-8 pb-32 overflow-hidden">
+    <main class="bg-black pt-8 pb-32">
         @yield('content')
     </main>
 
@@ -206,32 +193,8 @@
     <!-- Mobile Browser Behavior Prevention -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Prevent pull-to-refresh
-            document.body.style.overscrollBehavior = 'none';
-            
-            // Prevent touch scrolling on body
-            document.body.addEventListener('touchmove', function(e) {
-                e.preventDefault();
-            }, { passive: false });
-            
-            // Prevent any scroll events
-            window.addEventListener('scroll', function(e) {
-                e.preventDefault();
-                window.scrollTo(0, 0);
-            }, { passive: false });
-            
-            // Prevent zoom gestures
-            document.addEventListener('gesturestart', function(e) {
-                e.preventDefault();
-            });
-            
-            document.addEventListener('gesturechange', function(e) {
-                e.preventDefault();
-            });
-            
-            document.addEventListener('gestureend', function(e) {
-                e.preventDefault();
-            });
+            // Prevent pull-to-refresh but allow scrolling
+            document.body.style.overscrollBehavior = 'contain';
             
             // Set viewport meta tag programmatically
             const viewport = document.querySelector('meta[name="viewport"]');
@@ -247,13 +210,150 @@
             document.addEventListener('visibilitychange', function() {
                 document.body.style.backgroundColor = 'black';
             });
+            
+            // Initialize cart sidebar functionality
+            initializeCartSidebar();
         });
         
-        // Additional mobile fixes
-        if ('ontouchstart' in window) {
-            // Mobile device detected
-            document.documentElement.style.touchAction = 'none';
-            document.body.style.touchAction = 'none';
+        // Global cart sidebar functions
+        function initializeCartSidebar() {
+            // Find all cart forms in the sidebar
+            const cartForms = document.querySelectorAll('.cart-form');
+            cartForms.forEach(form => {
+                // Remove any existing listeners to prevent duplicates
+                form.removeEventListener('submit', handleCartFormSubmit);
+                // Add the submit listener
+                form.addEventListener('submit', handleCartFormSubmit);
+            });
+        }
+        
+        async function handleCartFormSubmit(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            const url = form.action;
+            const method = form.method;
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (response.ok) {
+                    // Refresh the cart sidebar content
+                    refreshCartSidebar();
+                } else {
+                    console.error('Error updating cart');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        
+        async function refreshCartSidebar() {
+            try {
+                const response = await fetch('{{ route("cart.sidebar") }}', {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (response.ok) {
+                    const html = await response.text();
+                    
+                    // Create a temporary div to parse the HTML
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    
+                    const cartSidebar = document.getElementById('cart-sidebar');
+                    if (!cartSidebar) return;
+                    
+                    // Find the cart items container in the new HTML
+                    const newCartItems = tempDiv.querySelector('.flex-1.overflow-y-auto');
+                    const newCartSummary = tempDiv.querySelector('.border-t.border-gray-700');
+                    
+                    // Find the current cart items container
+                    const currentCartItems = cartSidebar.querySelector('.flex-1.overflow-y-auto');
+                    const currentCartSummary = cartSidebar.querySelector('.border-t.border-gray-700');
+                    
+                    // Update only the cart items and summary sections
+                    if (newCartItems && currentCartItems) {
+                        currentCartItems.innerHTML = newCartItems.innerHTML;
+                    }
+                    
+                    if (newCartSummary && currentCartSummary) {
+                        currentCartSummary.innerHTML = newCartSummary.innerHTML;
+                    }
+                    
+                    // Update flash messages if any
+                    const newFlashMessages = tempDiv.querySelector('.p-4.m-4');
+                    const currentFlashMessages = cartSidebar.querySelector('.p-4.m-4');
+                    
+                    if (newFlashMessages && currentFlashMessages) {
+                        currentFlashMessages.innerHTML = newFlashMessages.innerHTML;
+                    } else if (newFlashMessages && !currentFlashMessages) {
+                        // Insert flash messages after header
+                        const header = cartSidebar.querySelector('.flex.items-center.justify-between');
+                        if (header) {
+                            header.insertAdjacentElement('afterend', newFlashMessages);
+                        }
+                    }
+                    
+                    // Reinitialize event listeners for the new content
+                    initializeCartSidebar();
+                }
+            } catch (error) {
+                console.error('Error refreshing cart:', error);
+            }
+        }
+        
+        function closeSlideover() {
+            // Try multiple methods to close the slideover
+            try {
+                // Method 1: Try to find and close Splade slideover
+                const slideover = document.querySelector('[data-splade-slideover]');
+                if (slideover) {
+                    slideover.remove();
+                    return;
+                }
+                
+                // Method 2: Try to find Splade modal and close it
+                const modal = document.querySelector('[data-splade-modal]');
+                if (modal) {
+                    modal.remove();
+                    return;
+                }
+                
+                // Method 3: Try to go back in history
+                if (window.history.length > 1) {
+                    window.history.back();
+                    return;
+                }
+                
+                // Method 4: Try to close any overlay/modal
+                const overlay = document.querySelector('.fixed.inset-0');
+                if (overlay) {
+                    overlay.remove();
+                    return;
+                }
+                
+                // Method 5: Remove any backdrop
+                const backdrop = document.querySelector('[data-splade-backdrop]');
+                if (backdrop) {
+                    backdrop.remove();
+                    return;
+                }
+                
+            } catch (error) {
+                console.error('Error closing slideover:', error);
+                // Fallback: try to go back
+                window.history.back();
+            }
         }
     </script>
 </x-splade-layout>

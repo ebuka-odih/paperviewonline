@@ -1,126 +1,107 @@
-<x-splade-layout>
-    <x-slot:title>
-        Shopping Cart - {{ env('APP_NAME') }}
-    </x-slot>
+@extends('pages.layout.app')
 
-    <!-- Sticky Header -->
-    <header class="sticky top-0 z-50 bg-black bg-opacity-90 w-full flex items-center justify-between px-8 py-4 shadow-md">
-        <!-- Logo -->
-        <div class="flex items-center">
-            <a href="{{ route('index') }}" class="text-white hover:text-[#65644A] transition-colors">
-                <h1>{{ env('APP_NAME') }}</h1>
-            </a>
-        </div>
-        <!-- Center (empty or site name) -->
-        <div class="flex-1 text-center">
-            <!-- Optionally add site name here -->
-        </div>
-        <!-- Cart -->
-        <div class="flex items-center">
-            <a href="{{ route('cart.view') }}" class="text-white hover:text-[#65644A] transition-colors">
-                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
-                </svg>
-            </a>
-        </div>
-    </header>
+@section('title', 'Shopping Cart')
 
-    <div class="min-h-screen bg-black pt-8 pb-32">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Breadcrumb -->
-            <nav class="mb-8">
-                <ol class="flex items-center space-x-2 text-sm text-gray-400">
-                    <li><a href="{{ route('index') }}" class="hover:text-white transition-colors">Home</a></li>
-                    <li><span class="mx-2">/</span></li>
-                    <li class="text-white">Shopping Cart</li>
-                </ol>
-            </nav>
+@section('content')
+<div class="max-w-4xl mx-auto bg-black rounded-2xl shadow-lg p-8 mt-8 text-white">
+    <h1 class="text-3xl font-bold mb-6">Shopping Cart</h1>
 
-            <!-- Alert Messages -->
-            @if(session('cart_message'))
-                <div class="bg-green-900 border border-green-700 text-green-100 px-4 py-3 rounded-lg mb-6">
-                    {{ session('cart_message') }}
+    @if(session('cart_message'))
+        <div class="mb-6 p-4 bg-green-900/80 text-green-200 rounded-lg">
+            {{ session('cart_message') }}
+        </div>
+    @endif
+
+    @if(session('cart_error'))
+        <div class="mb-6 p-4 bg-red-900/80 text-red-200 rounded-lg">
+            {{ session('cart_error') }}
+        </div>
+    @endif
+
+    @if($cart && count($cart) > 0)
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Cart Items -->
+            <div class="lg:col-span-2">
+                <div class="bg-gray-900 rounded-lg p-6">
+                    <h2 class="text-xl font-semibold mb-4">Cart Items ({{ $cartCount }})</h2>
+                    <div class="space-y-4">
+                        @foreach($cart as $productId => $item)
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-4 p-4 border border-gray-700 rounded-lg">
+                                <!-- Product Image and Details -->
+                                <div class="flex items-center space-x-4 min-w-0 flex-1">
+                                    <div class="flex-shrink-0">
+                                        <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" 
+                                             class="w-16 h-16 object-cover rounded">
+                                    </div>
+
+                                    <div class="min-w-0 flex-1">
+                                        <h3 class="font-semibold text-white truncate">{{ $item['name'] }}</h3>
+                                        <p class="text-[#65644A] font-bold">₦{{ number_format($item['price'], 2) }}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Controls and Total Row -->
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-4 min-w-0">
+                                    <!-- Quantity Controls -->
+                                    <div class="flex items-center space-x-2">
+                                        <form action="{{ route('cart.update') }}" method="POST" class="inline">
+                                            @csrf
+                                            <input type="hidden" name="product_id" value="{{ $productId }}" />
+                                            <input type="hidden" name="action" value="decrease" />
+                                            <button type="submit" 
+                                                    class="w-8 h-8 bg-gray-700 hover:bg-gray-600 text-white rounded flex items-center justify-center transition-colors">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                        
+                                        <span class="w-12 text-center font-semibold">{{ $item['quantity'] }}</span>
+                                        
+                                        <form action="{{ route('cart.update') }}" method="POST" class="inline">
+                                            @csrf
+                                            <input type="hidden" name="product_id" value="{{ $productId }}" />
+                                            <input type="hidden" name="action" value="increase" />
+                                            <button type="submit" 
+                                                    class="w-8 h-8 bg-gray-700 hover:bg-gray-600 text-white rounded flex items-center justify-center transition-colors">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <!-- Item Total and Remove Button -->
+                                    <div class="flex items-center justify-between sm:justify-end gap-4">
+                                        <!-- Item Total -->
+                                        <div class="text-right">
+                                            <p class="text-lg font-semibold text-white">₦{{ number_format($item['price'] * $item['quantity'], 2) }}</p>
+                                        </div>
+
+                                        <!-- Remove Button -->
+                                        <div class="flex-shrink-0">
+                                            <form action="{{ route('cart.remove') }}" method="POST" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <input type="hidden" name="product_id" value="{{ $productId }}" />
+                                                <button type="submit" class="text-red-400 hover:text-red-300 transition-colors">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
-            @endif
-            
-            @if(session('cart_error'))
-                <div class="bg-red-900 border border-red-700 text-red-100 px-4 py-3 rounded-lg mb-6">
-                    {{ session('cart_error') }}
-                </div>
-            @endif
-
-            <!-- Cart Title -->
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-white">Shopping Cart</h1>
-                <p class="text-gray-400 mt-2">{{ $cartCount }} item(s) in your cart</p>
             </div>
 
-            @if(count($cart) > 0)
-                <!-- Cart Items -->
-                <div class="space-y-6 mb-8">
-                    @foreach($cart as $productId => $item)
-                        <div class="bg-gray-900 rounded-lg p-6 flex items-center space-x-6">
-                            <!-- Product Image -->
-                            <div class="flex-shrink-0">
-                                <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="w-24 h-24 object-cover rounded-lg">
-                            </div>
-
-                            <!-- Product Details -->
-                            <div class="flex-1">
-                                <h3 class="text-lg font-semibold text-white">{{ $item['name'] }}</h3>
-                                <p class="text-gray-400 text-sm">SKU: {{ $item['id'] }}</p>
-                                <p class="text-[#65644A] font-medium">£{{ number_format($item['price'], 2) }}</p>
-                            </div>
-
-                            <!-- Quantity Controls -->
-                            <div class="flex items-center space-x-4">
-                                <div class="flex items-center border border-gray-700 rounded-lg">
-                                    <form action="{{ route('cart.update') }}" method="POST" class="flex items-center">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="hidden" name="product_id" value="{{ $productId }}" />
-                                        <input type="hidden" name="quantity" value="{{ $item['quantity'] - 1 }}" />
-                                        <button type="submit" class="px-4 py-2 text-white hover:bg-gray-800 transition-colors" {{ $item['quantity'] <= 1 ? 'disabled' : '' }}>-</button>
-                                    </form>
-                                    
-                                    <span class="px-4 py-2 text-white">{{ $item['quantity'] }}</span>
-                                    
-                                    <form action="{{ route('cart.update') }}" method="POST" class="flex items-center">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="hidden" name="product_id" value="{{ $productId }}" />
-                                        <input type="hidden" name="quantity" value="{{ $item['quantity'] + 1 }}" />
-                                        <button type="submit" class="px-4 py-2 text-white hover:bg-gray-800 transition-colors" {{ $item['quantity'] >= $item['stock'] ? 'disabled' : '' }}>+</button>
-                                    </form>
-                                </div>
-                                
-                                <span class="text-gray-400 text-sm">of {{ $item['stock'] }} available</span>
-                            </div>
-
-                            <!-- Item Total -->
-                            <div class="text-right">
-                                <p class="text-lg font-semibold text-white">£{{ number_format($item['price'] * $item['quantity'], 2) }}</p>
-                            </div>
-
-                            <!-- Remove Button -->
-                            <div class="flex-shrink-0">
-                                <form action="{{ route('cart.remove') }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <input type="hidden" name="product_id" value="{{ $productId }}" />
-                                    <button type="submit" class="text-red-400 hover:text-red-300 transition-colors">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                        </svg>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
-                <!-- Cart Summary -->
-                <div class="bg-gray-900 rounded-lg p-6">
+            <!-- Cart Summary -->
+            <div class="lg:col-span-1">
+                <div class="bg-gray-900 rounded-lg p-6 sticky top-8">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-semibold text-white">Cart Summary</h2>
                         <form action="{{ route('cart.clear') }}" method="POST" class="inline">
@@ -132,10 +113,10 @@
                         </form>
                     </div>
                     
-                    <div class="space-y-2 mb-6">
+                    <div class="space-y-3 mb-6">
                         <div class="flex justify-between text-gray-400">
                             <span>Subtotal ({{ $cartCount }} items):</span>
-                            <span>£{{ $cartTotal }}</span>
+                            <span>₦{{ $cartTotal }}</span>
                         </div>
                         <div class="flex justify-between text-gray-400">
                             <span>Shipping:</span>
@@ -143,47 +124,42 @@
                         </div>
                         <div class="flex justify-between text-gray-400">
                             <span>Tax:</span>
-                            <span>£0.00</span>
+                            <span>₦0.00</span>
                         </div>
-                        <div class="border-t border-gray-700 pt-2 flex justify-between text-lg font-semibold text-white">
+                        <div class="border-t border-gray-700 pt-3 flex justify-between text-lg font-semibold text-white">
                             <span>Total:</span>
-                            <span>£{{ $cartTotal }}</span>
+                            <span class="text-[#65644A]">₦{{ $cartTotal }}</span>
                         </div>
                     </div>
 
                     <div class="space-y-3">
-                        <button class="w-full bg-[#65644A] hover:bg-[#65644A] text-white font-semibold py-4 px-6 rounded-lg transition-colors">
+                        <a href="{{ route('checkout.show') }}" 
+                           class="w-full bg-[#65644A] hover:bg-[#65644A]/90 text-white font-bold py-3 px-6 rounded-lg transition-colors text-center block">
                             Proceed to Checkout
-                        </button>
-                        <a href="{{ route('index') }}" class="block w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-4 px-6 rounded-lg transition-colors text-center">
+                        </a>
+                        
+                        <a href="{{ route('index') }}" 
+                           class="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-colors text-center block">
                             Continue Shopping
                         </a>
                     </div>
                 </div>
-            @else
-                <!-- Empty Cart -->
-                <div class="text-center py-12">
-                    <svg class="w-24 h-24 text-gray-600 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m6 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
-                    </svg>
-                    <h2 class="text-2xl font-semibold text-white mb-4">Your cart is empty</h2>
-                    <p class="text-gray-400 mb-8">Looks like you haven't added any items to your cart yet.</p>
-                    <a href="{{ route('index') }}" class="bg-[#65644A] hover:bg-[#65644A] text-white font-semibold py-3 px-6 rounded-lg transition-colors">
-                        Start Shopping
-                    </a>
-                </div>
-            @endif
+            </div>
         </div>
-    </div>
-
-    <!-- Footer Menu -->
-    <footer class="w-full bg-black bg-opacity-90 py-4">
-        <div class="flex flex-wrap justify-center items-center gap-8 text-white text-sm font-semibold">
-            <a href="#" class="hover:text-[#65644A] transition-colors">HELP</a>
-            <a href="#" class="hover:text-[#65644A] transition-colors">PRIVACY</a>
-            <a href="#" class="hover:text-[#65644A] transition-colors">TERMS</a>
-            <a href="#" class="hover:text-[#65644A] transition-colors">DO NOT SELL MY PERSONAL INFORMATION</a>
-            <a href="#" class="hover:text-[#65644A] transition-colors">ACCESSIBILITY</a>
+    @else
+        <div class="text-center py-12">
+            <div class="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">Your cart is empty</h2>
+            <p class="text-gray-400 mb-6">Looks like you haven't added any items to your cart yet.</p>
+            <a href="{{ route('index') }}" 
+               class="inline-block bg-[#65644A] hover:bg-[#65644A]/90 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+                Start Shopping
+            </a>
         </div>
-    </footer>
-</x-splade-layout> 
+    @endif
+</div>
+@endsection 

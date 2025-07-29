@@ -78,16 +78,34 @@ class CartController extends Controller
         \Log::info('Update quantity request', [
             'all_data' => $request->all(),
             'product_id' => $request->product_id,
-            'action' => $request->action
+            'action' => $request->action,
+            'headers' => $request->headers->all(),
+            'method' => $request->method(),
+            'url' => $request->url()
         ]);
 
-        $request->validate([
-            'product_id' => 'required|string',
-            'action' => 'required|in:increase,decrease',
-        ]);
+        try {
+            $request->validate([
+                'product_id' => 'required',
+                'action' => 'required|in:increase,decrease',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation failed', [
+                'errors' => $e->errors(),
+                'request_data' => $request->all()
+            ]);
+            
+            if ($request->ajax()) {
+                return response()->json(['errors' => $e->errors()], 422);
+            }
+            return back()->withErrors($e->errors());
+        }
 
         $product = Product::find($request->product_id);
         if (!$product) {
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Product not found.'], 404);
+            }
             return back()->with('cart_error', 'Product not found.');
         }
         
@@ -95,6 +113,9 @@ class CartController extends Controller
         $productId = $request->product_id;
 
         if (!isset($cart[$productId])) {
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Product not found in cart.'], 404);
+            }
             return back()->with('cart_error', 'Product not found in cart.');
         }
 
@@ -104,6 +125,9 @@ class CartController extends Controller
             $newQuantity = $currentQuantity + 1;
             // Check if new quantity exceeds stock
             if ($newQuantity > $product->stock) {
+                if ($request->ajax()) {
+                    return response()->json(['error' => 'Cannot increase quantity. Only ' . $product->stock . ' items available.'], 400);
+                }
                 return back()->with('cart_error', 'Cannot increase quantity. Only ' . $product->stock . ' items available.');
             }
         } else {
@@ -112,6 +136,10 @@ class CartController extends Controller
             if ($newQuantity <= 0) {
                 unset($cart[$productId]);
                 Session::put('cart', $cart);
+                
+                if ($request->ajax()) {
+                    return response()->json(['message' => 'Item removed from cart.']);
+                }
                 return back()->with('cart_message', 'Item removed from cart.');
             }
         }
@@ -119,6 +147,12 @@ class CartController extends Controller
         $cart[$productId]['quantity'] = $newQuantity;
         Session::put('cart', $cart);
 
+        if ($request->ajax()) {
+            \Log::info('AJAX request detected, returning JSON');
+            return response()->json(['message' => 'Quantity updated successfully!']);
+        }
+        
+        \Log::info('Regular request detected, returning back');
         return back()->with('cart_message', 'Quantity updated successfully!');
     }
 
@@ -130,9 +164,21 @@ class CartController extends Controller
             'product_id' => $request->product_id
         ]);
 
-        $request->validate([
-            'product_id' => 'required|string',
-        ]);
+        try {
+            $request->validate([
+                'product_id' => 'required',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation failed', [
+                'errors' => $e->errors(),
+                'request_data' => $request->all()
+            ]);
+            
+            if ($request->ajax()) {
+                return response()->json(['errors' => $e->errors()], 422);
+            }
+            return back()->withErrors($e->errors());
+        }
 
         $cart = Session::get('cart', []);
         $productId = $request->product_id;
@@ -142,9 +188,15 @@ class CartController extends Controller
             unset($cart[$productId]);
             Session::put('cart', $cart);
 
+            if ($request->ajax()) {
+                return response()->json(['message' => $productName . ' removed from cart successfully!']);
+            }
             return back()->with('cart_message', $productName . ' removed from cart successfully!');
         }
 
+        if ($request->ajax()) {
+            return response()->json(['error' => 'Product not found in cart.'], 404);
+        }
         return back()->with('cart_error', 'Product not found in cart.');
     }
 

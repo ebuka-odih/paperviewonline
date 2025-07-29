@@ -2,76 +2,441 @@
 
 @section('title', 'Checkout')
 
+<style>
+    /* AGGRESSIVE CSS TO FORCE DARK INPUTS - MAXIMUM SPECIFICITY */
+    
+    /* Target every possible input selector with maximum specificity */
+    .checkout-form input[type=text], 
+    .checkout-form input:where(:not([type])), 
+    .checkout-form input[type=email], 
+    .checkout-form input[type=url], 
+    .checkout-form input[type=password], 
+    .checkout-form input[type=number], 
+    .checkout-form input[type=date], 
+    .checkout-form input[type=datetime-local], 
+    .checkout-form input[type=month], 
+    .checkout-form input[type=search], 
+    .checkout-form input[type=tel], 
+    .checkout-form input[type=time], 
+    .checkout-form input[type=week], 
+    .checkout-form input[multiple], 
+    .checkout-form textarea, 
+    .checkout-form select,
+    div.checkout-form input[type=text], 
+    div.checkout-form input:where(:not([type])), 
+    div.checkout-form input[type=email], 
+    div.checkout-form input[type=url], 
+    div.checkout-form input[type=password], 
+    div.checkout-form input[type=number], 
+    div.checkout-form input[type=date], 
+    div.checkout-form input[type=datetime-local], 
+    div.checkout-form input[type=month], 
+    div.checkout-form input[type=search], 
+    div.checkout-form input[type=tel], 
+    div.checkout-form input[type=time], 
+    div.checkout-form input[type=week], 
+    div.checkout-form input[multiple], 
+    div.checkout-form textarea, 
+    div.checkout-form select {
+        background: #111827 !important;
+        background-color: #111827 !important;
+        color: #ffffff !important;
+        border: 1px solid #4b5563 !important;
+        border-color: #4b5563 !important;
+        border-radius: 6px !important;
+        padding: 8px 12px !important;
+        font-size: 16px !important;
+        line-height: 24px !important;
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+    }
+    
+    /* Even more specific selectors for stubborn inputs */
+    form.checkout-form input,
+    form.checkout-form select,
+    form.checkout-form textarea,
+    [class*="checkout-form"] input,
+    [class*="checkout-form"] select,
+    [class*="checkout-form"] textarea {
+        background: #111827 !important;
+        background-color: #111827 !important;
+        color: #ffffff !important;
+        border: 1px solid #4b5563 !important;
+    }
+    
+    /* Placeholder text */
+    .checkout-form input::placeholder,
+    .checkout-form textarea::placeholder,
+    div.checkout-form input::placeholder,
+    div.checkout-form textarea::placeholder,
+    form.checkout-form input::placeholder,
+    form.checkout-form textarea::placeholder {
+        color: #9ca3af !important;
+        opacity: 1 !important;
+    }
+    
+    /* Focus states with high specificity */
+    .checkout-form input:focus,
+    .checkout-form select:focus,
+    .checkout-form textarea:focus,
+    div.checkout-form input:focus,
+    div.checkout-form select:focus,
+    div.checkout-form textarea:focus,
+    form.checkout-form input:focus,
+    form.checkout-form select:focus,
+    form.checkout-form textarea:focus {
+        background: #111827 !important;
+        background-color: #111827 !important;
+        color: #ffffff !important;
+        border-color: #65644A !important;
+        box-shadow: 0 0 0 2px rgba(101, 100, 74, 0.3) !important;
+        outline: none !important;
+    }
+    
+    /* Select dropdown options */
+    .checkout-form select option,
+    div.checkout-form select option,
+    form.checkout-form select option {
+        background: #111827 !important;
+        background-color: #111827 !important;
+        color: #ffffff !important;
+    }
+    
+    /* Webkit autofill with maximum specificity */
+    .checkout-form input:-webkit-autofill,
+    .checkout-form input:-webkit-autofill:hover,
+    .checkout-form input:-webkit-autofill:focus,
+    div.checkout-form input:-webkit-autofill,
+    div.checkout-form input:-webkit-autofill:hover,
+    div.checkout-form input:-webkit-autofill:focus,
+    form.checkout-form input:-webkit-autofill,
+    form.checkout-form input:-webkit-autofill:hover,
+    form.checkout-form input:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0 1000px #111827 inset !important;
+        -webkit-text-fill-color: #ffffff !important;
+        border: 1px solid #4b5563 !important;
+        transition: background-color 5000s ease-in-out 0s !important;
+    }
+    
+    /* Nuclear option - target ANY input on the page */
+    * input[type="text"],
+    * input[type="email"], 
+    * input[type="tel"],
+    * input[type="password"],
+    * select,
+    * textarea {
+        background: #111827 !important;
+        color: #ffffff !important;
+        border: 1px solid #4b5563 !important;
+    }
+
+    /* OVERRIDE COMPILED CSS - MAXIMUM SPECIFICITY WITH INLINE STYLES */
+    
+    html body div.max-w-4xl form.checkout-form [type=text], 
+    html body div.max-w-4xl form.checkout-form input:where(:not([type])), 
+    html body div.max-w-4xl form.checkout-form [type=email], 
+    html body div.max-w-4xl form.checkout-form [type=url], 
+    html body div.max-w-4xl form.checkout-form [type=password], 
+    html body div.max-w-4xl form.checkout-form [type=number], 
+    html body div.max-w-4xl form.checkout-form [type=date], 
+    html body div.max-w-4xl form.checkout-form [type=datetime-local], 
+    html body div.max-w-4xl form.checkout-form [type=month], 
+    html body div.max-w-4xl form.checkout-form [type=search], 
+    html body div.max-w-4xl form.checkout-form [type=tel], 
+    html body div.max-w-4xl form.checkout-form [type=time], 
+    html body div.max-w-4xl form.checkout-form [type=week], 
+    html body div.max-w-4xl form.checkout-form [multiple], 
+    html body div.max-w-4xl form.checkout-form textarea, 
+    html body div.max-w-4xl form.checkout-form select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-color: #101828 !important;
+        background: #101828 !important;
+        color: #ffffff !important;
+        border-color: #6b7280 !important;
+        border: 1px solid #6b7280 !important;
+        border-width: 1px !important;
+        border-radius: 6px !important;
+        padding: 0.5rem 0.75rem !important;
+        font-size: 1rem !important;
+        line-height: 1.5rem !important;
+        --tw-shadow: 0 0 #0000 !important;
+    }
+    
+    /* FOCUS STATES WITH ULTRA HIGH SPECIFICITY */
+    html body div.max-w-4xl form.checkout-form [type=text]:focus, 
+    html body div.max-w-4xl form.checkout-form input:where(:not([type])):focus, 
+    html body div.max-w-4xl form.checkout-form [type=email]:focus, 
+    html body div.max-w-4xl form.checkout-form [type=url]:focus, 
+    html body div.max-w-4xl form.checkout-form [type=password]:focus, 
+    html body div.max-w-4xl form.checkout-form [type=number]:focus, 
+    html body div.max-w-4xl form.checkout-form [type=date]:focus, 
+    html body div.max-w-4xl form.checkout-form [type=datetime-local]:focus, 
+    html body div.max-w-4xl form.checkout-form [type=month]:focus, 
+    html body div.max-w-4xl form.checkout-form [type=search]:focus, 
+    html body div.max-w-4xl form.checkout-form [type=tel]:focus, 
+    html body div.max-w-4xl form.checkout-form [type=time]:focus, 
+    html body div.max-w-4xl form.checkout-form [type=week]:focus, 
+    html body div.max-w-4xl form.checkout-form [multiple]:focus, 
+    html body div.max-w-4xl form.checkout-form textarea:focus, 
+    html body div.max-w-4xl form.checkout-form select:focus {
+        background-color: #101828 !important;
+        background: #101828 !important;
+        color: #ffffff !important;
+        border-color: #65644A !important;
+        border: 1px solid #65644A !important;
+        box-shadow: 0 0 0 2px rgba(101, 100, 74, 0.3) !important;
+        outline: none !important;
+         }
+</style>
+
+<script>
+    // JAVASCRIPT BACKUP TO FORCE INPUT STYLING AFTER PAGE LOAD
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Forcing input styles with JavaScript...');
+        
+        // Function to apply dark styling to inputs
+        function forceInputStyling() {
+            const inputs = document.querySelectorAll('input, select, textarea');
+            console.log('Found inputs:', inputs.length);
+            
+            inputs.forEach(function(input) {
+                // Force dark background and white text
+                input.style.setProperty('background-color', '#101828', 'important');
+                input.style.setProperty('background', '#101828', 'important');
+                input.style.setProperty('color', '#ffffff', 'important');
+                input.style.setProperty('border', '1px solid #6b7280', 'important');
+                input.style.setProperty('border-color', '#6b7280', 'important');
+                input.style.setProperty('border-radius', '6px', 'important');
+                input.style.setProperty('padding', '0.5rem 0.75rem', 'important');
+                
+                // Add focus event listener
+                input.addEventListener('focus', function() {
+                    this.style.setProperty('background-color', '#101828', 'important');
+                    this.style.setProperty('background', '#101828', 'important');
+                    this.style.setProperty('color', '#ffffff', 'important');
+                    this.style.setProperty('border-color', '#65644A', 'important');
+                    this.style.setProperty('box-shadow', '0 0 0 2px rgba(101, 100, 74, 0.3)', 'important');
+                });
+                
+                // Add blur event to maintain styling
+                input.addEventListener('blur', function() {
+                    this.style.setProperty('background-color', '#101828', 'important');
+                    this.style.setProperty('background', '#101828', 'important');
+                    this.style.setProperty('color', '#ffffff', 'important');
+                    this.style.setProperty('border-color', '#6b7280', 'important');
+                });
+            });
+        }
+        
+        // Apply styles immediately
+        forceInputStyling();
+        
+        // Re-apply after a short delay (in case of dynamic content)
+        setTimeout(forceInputStyling, 100);
+        setTimeout(forceInputStyling, 500);
+        setTimeout(forceInputStyling, 1000);
+        
+        // Watch for new inputs being added dynamically
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === 1) { // Element node
+                            const newInputs = node.querySelectorAll ? node.querySelectorAll('input, select, textarea') : [];
+                            if (newInputs.length > 0) {
+                                console.log('New inputs detected, applying styles...');
+                                setTimeout(forceInputStyling, 50);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+        
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+</script>
+
 @section('content')
-<div class="max-w-2xl mx-auto bg-black rounded-2xl shadow-lg p-8 mt-8 text-white">
+<div class="max-w-4xl mx-auto bg-black rounded-2xl shadow-lg p-4 sm:p-8 mt-8 text-white">
     <h1 class="text-3xl font-bold mb-6">Checkout</h1>
 
-    @if($errors->any())
-        <div class="mb-4 p-4 bg-red-900/80 text-red-200 rounded">
-            <ul class="list-disc pl-5">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+    <!-- Success/Error Messages -->
+    @if(session('success'))
+        <div class="mb-4 p-4 bg-green-900/80 text-green-200 rounded">
+            {{ session('success') }}
         </div>
     @endif
 
-    <form action="{{ route('checkout.process') }}" method="POST" class="space-y-6">
-        @csrf
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label class="block mb-1 font-semibold">Name</label>
-                <input type="text" name="name" value="{{ old('name') }}" required class="w-full px-4 py-2 rounded bg-gray-900 border border-[#65644A] text-white focus:ring-2 focus:ring-[#65644A]">
-            </div>
-            <div>
-                <label class="block mb-1 font-semibold">Email</label>
-                <input type="email" name="email" value="{{ old('email') }}" required class="w-full px-4 py-2 rounded bg-gray-900 border border-[#65644A] text-white focus:ring-2 focus:ring-[#65644A]">
-            </div>
-            <div>
-                <label class="block mb-1 font-semibold">Phone (optional)</label>
-                <input type="text" name="phone" value="{{ old('phone') }}" class="w-full px-4 py-2 rounded bg-gray-900 border border-[#65644A] text-white focus:ring-2 focus:ring-[#65644A]">
-            </div>
-            <div>
-                <label class="block mb-1 font-semibold">Address</label>
-                <input type="text" name="address" value="{{ old('address') }}" required class="w-full px-4 py-2 rounded bg-gray-900 border border-[#65644A] text-white focus:ring-2 focus:ring-[#65644A]">
-            </div>
-            <div>
-                <label class="block mb-1 font-semibold">City</label>
-                <input type="text" name="city" value="{{ old('city') }}" required class="w-full px-4 py-2 rounded bg-gray-900 border border-[#65644A] text-white focus:ring-2 focus:ring-[#65644A]">
-            </div>
-            <div>
-                <label class="block mb-1 font-semibold">State</label>
-                <input type="text" name="state" value="{{ old('state') }}" required class="w-full px-4 py-2 rounded bg-gray-900 border border-[#65644A] text-white focus:ring-2 focus:ring-[#65644A]">
-            </div>
-            <div>
-                <label class="block mb-1 font-semibold">Zip</label>
-                <input type="text" name="zip" value="{{ old('zip') }}" required class="w-full px-4 py-2 rounded bg-gray-900 border border-[#65644A] text-white focus:ring-2 focus:ring-[#65644A]">
+    @if(session('error'))
+        <div class="mb-4 p-4 bg-red-900/80 text-red-200 rounded">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <x-splade-form action="{{ route('checkout.process') }}" method="POST" class="space-y-6 checkout-form">
+        
+        <!-- Customer Information -->
+        <div class="bg-gray-900 rounded-lg p-4 sm:p-6">
+            <h2 class="text-xl font-semibold mb-4">Customer Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block mb-1 font-semibold">Full Name *</label>
+                    <x-splade-input name="name" :value="old('name')" required 
+                                   class="w-full px-4 py-2 rounded bg-gray-900 border border-gray-700 text-white placeholder-gray-400 focus:ring-1 focus:ring-[#65644A] focus:border-[#65644A] focus:outline-none" />
+                    @error('name')
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block mb-1 font-semibold">Email Address *</label>
+                    <x-splade-input type="email" name="email" :value="old('email')" required 
+                                   class="w-full px-4 py-2 rounded bg-gray-900 border border-gray-700 text-white placeholder-gray-400 focus:ring-1 focus:ring-[#65644A] focus:border-[#65644A] focus:outline-none" />
+                    @error('email')
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block mb-1 font-semibold">Phone Number</label>
+                    <x-splade-input name="phone" :value="old('phone')" 
+                                   class="w-full px-4 py-2 rounded bg-gray-900 border border-gray-700 text-white placeholder-gray-400 focus:ring-1 focus:ring-[#65644A] focus:border-[#65644A] focus:outline-none" />
+                    @error('phone')
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
         </div>
 
-        <div class="mt-8">
-            <h2 class="text-xl font-semibold mb-2">Order Summary</h2>
-            <div class="bg-gray-900 rounded-lg p-4 mb-4">
-                @if($cart && count($cart) > 0)
-                    <ul class="divide-y divide-gray-800">
-                        @foreach($cart as $item)
-                            <li class="py-2 flex justify-between items-center">
-                                <span>{{ $item['name'] }} <span class="text-xs text-gray-400">x{{ $item['quantity'] }}</span></span>
-                                <span class="text-[#65644A] font-bold">£{{ number_format($item['price'] * $item['quantity'], 2) }}</span>
-                            </li>
-                        @endforeach
-                    </ul>
-                    <div class="flex justify-between items-center mt-4 pt-4 border-t border-[#65644A]">
-                        <span class="font-bold">Total</span>
-                        <span class="text-xl font-bold text-[#65644A]">£{{ number_format($cartTotal, 2) }}</span>
+        <!-- Shipping Address -->
+        <div class="bg-gray-900 rounded-lg p-4 sm:p-6">
+            <h2 class="text-xl font-semibold mb-4">Shipping Address</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                    <label class="block mb-1 font-semibold">Street Address *</label>
+                    <x-splade-input name="address" :value="old('address')" required 
+                                   class="w-full px-4 py-2 rounded bg-gray-900 border border-gray-700 text-white placeholder-gray-400 focus:ring-1 focus:ring-[#65644A] focus:border-[#65644A] focus:outline-none" />
+                    @error('address')
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block mb-1 font-semibold">City *</label>
+                    <x-splade-input name="city" :value="old('city')" required 
+                                   class="w-full px-4 py-2 rounded bg-gray-900 border border-gray-700 text-white placeholder-gray-400 focus:ring-1 focus:ring-[#65644A] focus:border-[#65644A] focus:outline-none" />
+                    @error('city')
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block mb-1 font-semibold">State/Province *</label>
+                    <x-splade-input name="state" :value="old('state')" required 
+                                   class="w-full px-4 py-2 rounded bg-gray-900 border border-gray-700 text-white placeholder-gray-400 focus:ring-1 focus:ring-[#65644A] focus:border-[#65644A] focus:outline-none" />
+                    @error('state')
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block mb-1 font-semibold">Country *</label>
+                    <x-splade-select name="country" :value="old('country')" required 
+                                    class="w-full px-4 py-2 rounded bg-gray-900 border border-gray-700 text-white focus:ring-1 focus:ring-[#65644A] focus:border-[#65644A] focus:outline-none">
+                        <option value="">Select Country</option>
+                        <option value="Nigeria">Nigeria</option>
+                        <option value="Ghana">Ghana</option>
+                        <option value="Kenya">Kenya</option>
+                        <option value="South Africa">South Africa</option>
+                        <option value="United States">United States</option>
+                        <option value="United Kingdom">United Kingdom</option>
+                        <option value="Canada">Canada</option>
+                        <option value="Australia">Australia</option>
+                    </x-splade-select>
+                    @error('country')
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block mb-1 font-semibold">ZIP/Postal Code *</label>
+                    <x-splade-input name="zip" :value="old('zip')" required 
+                                   class="w-full px-4 py-2 rounded bg-gray-900 border border-gray-700 text-white placeholder-gray-400 focus:ring-1 focus:ring-[#65644A] focus:border-[#65644A] focus:outline-none" />
+                    @error('zip')
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="bg-gray-900 rounded-lg p-4 sm:p-6">
+            <h2 class="text-xl font-semibold mb-4">Payment Method</h2>
+            <div class="space-y-3">
+                <label class="flex items-center space-x-3 cursor-pointer">
+                    <x-splade-input type="radio" name="payment_method" value="paystack" :checked="old('payment_method', 'paystack') === 'paystack'"
+                                   class="text-[#65644A] focus:ring-[#65644A] focus:ring-offset-0" />
+                    <div class="flex items-center space-x-2">
+                        <div class="h-6 w-16 bg-white rounded flex items-center justify-center">
+                            <span class="text-black font-bold text-xs">PAYSTACK</span>
+                        </div>
+                        <span class="font-medium">Paystack (Card, Bank Transfer, USSD)</span>
                     </div>
-                @else
-                    <p class="text-gray-400">Your cart is empty.</p>
-                @endif
+                </label>
+                @error('payment_method')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
         </div>
 
-        <button type="submit" class="w-full bg-[#65644A] hover:bg-[#65644A] text-white font-bold py-3 px-6 rounded-lg transition-colors text-lg">Place Order</button>
-    </form>
+        <!-- Order Summary -->
+        <div class="bg-gray-900 rounded-lg p-4 sm:p-6">
+            <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+            @if($cart && count($cart) > 0)
+                <div class="space-y-3 mb-4">
+                    @foreach($cart as $item)
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center py-2 border-b border-gray-700 gap-2">
+                            <div class="flex items-center space-x-3 min-w-0 flex-1">
+                                <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="w-12 h-12 object-cover rounded flex-shrink-0">
+                                <div class="min-w-0 flex-1">
+                                    <p class="font-medium truncate">{{ $item['name'] }}</p>
+                                    <p class="text-sm text-gray-400">Qty: {{ $item['quantity'] }}</p>
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0 text-right">
+                                <span class="text-[#65644A] font-bold text-sm sm:text-base">₦{{ number_format($item['price'] * $item['quantity'], 2) }}</span>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                
+                <div class="space-y-2 border-t border-gray-700 pt-4">
+                    <div class="flex flex-col sm:flex-row sm:justify-between text-gray-400 gap-1">
+                        <span class="text-sm sm:text-base">Subtotal ({{ count($cart) }} items):</span>
+                        <span class="text-sm sm:text-base font-medium">₦{{ number_format($subtotal, 2) }}</span>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:justify-between text-gray-400 gap-1">
+                        <span class="text-sm sm:text-base">Shipping:</span>
+                        <span class="text-sm sm:text-base font-medium">₦{{ number_format($shipping, 2) }}</span>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:justify-between text-gray-400 gap-1">
+                        <span class="text-sm sm:text-base">Tax:</span>
+                        <span class="text-sm sm:text-base font-medium">₦{{ number_format($tax, 2) }}</span>
+                    </div>
+                    <div class="border-t border-gray-700 pt-2 flex flex-col sm:flex-row sm:justify-between gap-1">
+                        <span class="text-lg font-semibold text-white">Total:</span>
+                        <span class="text-lg font-semibold text-[#65644A]">₦{{ number_format($total, 2) }}</span>
+                    </div>
+                </div>
+            @else
+                <p class="text-gray-400">Your cart is empty.</p>
+            @endif
+        </div>
+
+        <x-splade-submit class="w-full bg-[#65644A] hover:bg-[#65644A]/90 text-white font-bold py-4 px-6 rounded-lg transition-colors text-lg">
+            Proceed to Payment
+        </x-splade-submit>
+    </x-splade-form>
 </div>
 @endsection 
