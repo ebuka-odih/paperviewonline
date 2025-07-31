@@ -397,13 +397,13 @@
                 <div class="space-y-3 mb-4">
                     @foreach($cart as $item)
                         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center py-2 border-b border-gray-700 gap-2">
-                            <div class="flex items-center space-x-3 min-w-0 flex-1">
+                            <a href="{{ route('product.show', $item['slug']) }}" class="flex items-center space-x-3 min-w-0 flex-1 hover:opacity-80 transition-opacity">
                                 <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="w-12 h-12 object-cover rounded flex-shrink-0">
                                 <div class="min-w-0 flex-1">
-                                    <p class="font-medium truncate">{{ $item['name'] }}</p>
+                                    <p class="font-medium truncate hover:text-[#65644A] transition-colors">{{ $item['name'] }}</p>
                                     <p class="text-sm text-gray-400">Qty: {{ $item['quantity'] }}</p>
                                 </div>
-                            </div>
+                            </a>
                             <div class="flex-shrink-0 text-right">
                                 <span class="text-[#65644A] font-bold text-sm sm:text-base">₦{{ number_format($item['price'] * $item['quantity'], 2) }}</span>
                             </div>

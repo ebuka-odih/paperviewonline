@@ -35,6 +35,29 @@
             body {
                 overscroll-behavior: contain;
             }
+            
+            /* Mobile keyboard fixes */
+            .mobile-keyboard-active {
+                padding-bottom: 300px !important;
+            }
+            
+            /* Ensure inputs are visible when keyboard is active */
+            input:focus {
+                scroll-margin-top: 100px;
+            }
+            
+            /* Adjust viewport height for mobile keyboards */
+            .min-h-screen {
+                min-height: 100vh;
+                min-height: -webkit-fill-available;
+            }
+        }
+        
+        /* iOS Safari specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            .min-h-screen {
+                min-height: -webkit-fill-available;
+            }
         }
     </style>
 
@@ -110,14 +133,74 @@
                     alert('Thank you! You will be notified.');
                     emailInput.value = '';
                 });
+                
+                // Mobile keyboard handling
+                function handleMobileKeyboard() {
+                    const isMobile = window.innerWidth <= 768;
+                    if (!isMobile) return;
+                    
+                    // Handle email input focus
+                    emailInput.addEventListener('focus', function() {
+                        // Add class to body for additional padding
+                        document.body.classList.add('mobile-keyboard-active');
+                        
+                        // Scroll to input with delay to ensure keyboard is shown
+                        setTimeout(() => {
+                            this.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center',
+                                inline: 'nearest'
+                            });
+                        }, 300);
+                    });
+                    
+                    // Handle email input blur
+                    emailInput.addEventListener('blur', function() {
+                        // Remove class when input loses focus
+                        document.body.classList.remove('mobile-keyboard-active');
+                    });
+                    
+                    // Handle password input focus
+                    passwordInput.addEventListener('focus', function() {
+                        document.body.classList.add('mobile-keyboard-active');
+                        setTimeout(() => {
+                            this.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center',
+                                inline: 'nearest'
+                            });
+                        }, 300);
+                    });
+                    
+                    // Handle password input blur
+                    passwordInput.addEventListener('blur', function() {
+                        document.body.classList.remove('mobile-keyboard-active');
+                    });
+                    
+                    // Handle viewport height changes (keyboard show/hide)
+                    let initialViewportHeight = window.innerHeight;
+                    window.addEventListener('resize', function() {
+                        const currentHeight = window.innerHeight;
+                        if (currentHeight < initialViewportHeight) {
+                            // Keyboard is likely visible
+                            document.body.classList.add('mobile-keyboard-active');
+                        } else {
+                            // Keyboard is likely hidden
+                            document.body.classList.remove('mobile-keyboard-active');
+                        }
+                    });
+                }
+                
+                // Initialize mobile keyboard handling
+                handleMobileKeyboard();
             });
         </script>
         <!-- Logo -->
-        <div class="flex items-center p-8">
-            <img src="/img/logo.png" alt="Logo" class="h-40 w-auto mr-4" style="object-fit:contain;" />
+        <div class="flex items-center p-2 pt-4 -mt-16">
+            <img src="/img/logo.png" alt="Logo" class="h-24 w-auto mr-4" style="object-fit:contain;" />
         </div>
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col items-center justify-start px-4 mt-2">
+        <div class="flex-1 flex flex-col items-center justify-start px-4 -mt-8">
             <div class="w-full max-w-md flex flex-col items-center">
                 <div class="mb-6 text-center mt-0">
                     <p class="text-lg md:text-xl font-mono tracking-wide mb-4">{{ strtoupper($settings['message']) }}</p>
