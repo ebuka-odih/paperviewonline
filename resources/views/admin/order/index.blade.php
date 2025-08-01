@@ -3,16 +3,16 @@
 @section('title', 'Order Management')
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid mt-5 pt-4">
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">Order Management</h1>
         <div class="d-flex gap-2">
             <a href="{{ route('admin.orders.analytics') }}" class="btn btn-info">
-                <i class="fas fa-chart-bar"></i> Analytics
+                <em class="icon ni ni-chart-bar"></em> Analytics
             </a>
             <a href="{{ route('admin.orders.export') }}?{{ http_build_query(request()->all()) }}" class="btn btn-success">
-                <i class="fas fa-download"></i> Export CSV
+                <em class="icon ni ni-download"></em> Export CSV
             </a>
         </div>
     </div>
@@ -28,7 +28,7 @@
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{ number_format($stats['total_orders']) }}</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                            <em class="icon ni ni-bag-fill fa-2x text-gray-300"></em>
                         </div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                             <div class="h5 mb-0 font-weight-bold text-gray-800">₦{{ number_format($stats['total_revenue'], 2) }}</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                            <em class="icon ni ni-coins fa-2x text-gray-300"></em>
                         </div>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{ number_format($stats['pending_orders']) }}</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                            <em class="icon ni ni-clock fa-2x text-gray-300"></em>
                         </div>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{ number_format($stats['this_month_orders']) }} orders</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                            <em class="icon ni ni-calendar fa-2x text-gray-300"></em>
                         </div>
                     </div>
                 </div>
@@ -128,7 +128,7 @@
                 <div class="col-md-1">
                     <label class="form-label">&nbsp;</label>
                     <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search"></i>
+                        <em class="icon ni ni-search"></em>
                     </button>
                 </div>
             </form>
@@ -230,15 +230,15 @@
                                     <div class="btn-group" role="group">
                                         <a href="{{ route('admin.orders.show', $order) }}" 
                                            class="btn btn-sm btn-outline-primary" title="View">
-                                            <i class="fas fa-eye"></i>
+                                            <em class="icon ni ni-eye"></em>
                                         </a>
                                         <a href="{{ route('admin.orders.edit', $order) }}" 
                                            class="btn btn-sm btn-outline-secondary" title="Edit">
-                                            <i class="fas fa-edit"></i>
+                                            <em class="icon ni ni-edit"></em>
                                         </a>
                                         <button type="button" class="btn btn-sm btn-outline-success dropdown-toggle" 
                                                 data-bs-toggle="dropdown" title="Quick Actions">
-                                            <i class="fas fa-bolt"></i>
+                                            <em class="icon ni ni-setting"></em>
                                         </button>
                                         <ul class="dropdown-menu">
                                             @if($order->canBeShipped())
@@ -247,7 +247,7 @@
                                                         @csrf
                                                         <input type="hidden" name="status" value="shipped">
                                                         <button type="submit" class="dropdown-item">
-                                                            <i class="fas fa-shipping-fast"></i> Mark as Shipped
+                                                            <em class="icon ni ni-truck"></em> Mark as Shipped
                                                         </button>
                                                     </form>
                                                 </li>
@@ -258,7 +258,7 @@
                                                         @csrf
                                                         <input type="hidden" name="status" value="delivered">
                                                         <button type="submit" class="dropdown-item">
-                                                            <i class="fas fa-check-circle"></i> Mark as Delivered
+                                                            <em class="icon ni ni-check-circle"></em> Mark as Delivered
                                                         </button>
                                                     </form>
                                                 </li>
@@ -269,7 +269,7 @@
                                                         @csrf
                                                         <input type="hidden" name="status" value="cancelled">
                                                         <button type="submit" class="dropdown-item text-danger">
-                                                            <i class="fas fa-times-circle"></i> Cancel Order
+                                                            <em class="icon ni ni-cross-circle"></em> Cancel Order
                                                         </button>
                                                     </form>
                                                 </li>
@@ -282,7 +282,7 @@
                             <tr>
                                 <td colspan="8" class="text-center py-4">
                                     <div class="text-muted">
-                                        <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+                                        <em class="icon ni ni-bag-fill fa-3x mb-3"></em>
                                         <p>No orders found</p>
                                     </div>
                                 </td>

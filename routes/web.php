@@ -21,6 +21,9 @@ Route::middleware(['splade'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('index');
     Route::get('/product/{product:slug}', [HomeController::class, 'show'])->name('product.show');
     Route::get('/docs', fn () => view('docs'))->name('docs');
+    
+    // Coming soon password verification
+    Route::post('/coming-soon/verify', [HomeController::class, 'verifyComingSoonPassword'])->name('coming-soon.verify');
 
     // Registers routes to support the interactive components...
     Route::spladeWithVueBridge();
