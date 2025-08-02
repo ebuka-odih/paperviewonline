@@ -294,7 +294,7 @@
     </style>
 </head>
 <body>
-    <div style="background-color: #000000 !important; color: #ffffff !important;" class="coming-soon-container">
+    <div style="background-color: #000000 !important; color: #ffffff !important; text-align: center;" class="coming-soon-container">
         <div class="container-fluid">
             <div class="row justify-content-center">
                 <div class="col-12">
@@ -308,6 +308,7 @@
                         <div class="message-container">
                             <h2 class="message">{{ strtoupper($settings['message']) }}</h2>
                         </div>
+                        <br>
                         
                         <!-- Password Section -->
                         <div class="password-section mb-3">
@@ -330,6 +331,7 @@
                                 </div>
                             </form>
                         </div>
+                        <br>
                         
                         <!-- Email Signup -->
                         <div class="email-section">
