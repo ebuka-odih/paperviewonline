@@ -68,18 +68,21 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding: 0;
+            justify-content: center;
+            padding: 80px 20px 20px 20px;
             text-align: center;
+            position: relative;
         }
         
         .logo-section {
-            margin-top: 60px;
-            margin-bottom: 40px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            margin: 0;
         }
         
         .logo {
-            height: 35px;
+            height: 25px;
             width: auto;
             object-fit: contain;
         }
@@ -226,12 +229,12 @@
         /* Mobile optimizations */
         @media (max-width: 480px) {
             .logo {
-                height: 30px;
+                height: 20px;
             }
             
             .logo-section {
-                margin-top: 40px;
-                margin-bottom: 30px;
+                top: 15px;
+                left: 15px;
             }
             
             .message {
@@ -296,12 +299,12 @@
             <div class="row justify-content-center">
                 <div class="col-12">
                     <!-- Logo -->
-                    <div class="logo-section">
-                        <img src="/img/logo.png" alt="Logo" class="logo">
+                    <div class="logo-section" style="position: absolute !important; top: 20px !important; left: 20px !important; margin: 0 !important; z-index: 1000 !important;">
+                        <img src="/img/logo.png" alt="Logo" class="logo" style="height: 110px !important; width: auto !important; object-fit: contain !important;">
                     </div>
                     
                     <!-- Main Content -->
-                    <div class="content-section mx-auto">
+                    <div sty class="content-section mx-auto" style="margin-top: 140px !important;">
                         <div class="message-container">
                             <h2 class="message">{{ strtoupper($settings['message']) }}</h2>
                         </div>
