@@ -306,9 +306,9 @@
                     <!-- Main Content -->
                     <div sty class="content-section mx-auto" style="margin-top: 140px !important;">
                         <div class="message-container">
-                            <h2 class="message">{{ strtoupper($settings['message']) }}</h2>
+                            <h4 class="message">{{ strtoupper($settings['message']) }}</h4>
                         </div>
-                        <br>
+                        <br><br>
                         
                         <!-- Password Section -->
                         <div class="password-section mb-3">
@@ -334,7 +334,7 @@
                         <br>
                         
                         <!-- Email Signup -->
-                        <div class="email-section">
+                        <div style="margin-top: 30px;" class="email-section">
                             <p class="email-title">BE THE FIRST TO RECEIVE THE PASSWORD WHEN '{{ strtoupper(config('app.name', 'PaperView Online')) }}' DROPS</p>
                             <div class="email-form">
                                 <div class="mb-2">
