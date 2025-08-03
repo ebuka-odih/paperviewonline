@@ -302,9 +302,10 @@
                     <div class="logo-section" style="position: absolute !important; top: 20px !important; left: 20px !important; margin: 0 !important; z-index: 1000 !important;">
                         <img src="/img/logo.png" alt="Logo" class="logo" style="height: 110px !important; width: auto !important; object-fit: contain !important;">
                     </div>
+                    <br><br><br>
                     
                     <!-- Main Content -->
-                    <div sty class="content-section mx-auto" style="margin-top: 140px !important;">
+                    <div sty class="content-section mx-auto" style="margin-top: 160px !important;">
                         <div class="message-container">
                             <h4 class="message">{{ strtoupper($settings['message']) }}</h4>
                         </div>
