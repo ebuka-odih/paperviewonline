@@ -93,11 +93,19 @@
         }
         
         .message {
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 1.5;
-            letter-spacing: 0.02em;
-            margin-bottom: 30px;
+            font-size: 14px !important;
+            font-weight: 300 !important;
+            font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif !important;
+            line-height: 1.6 !important;
+            letter-spacing: 0.03em !important;
+            margin-bottom: 30px !important;
+        }
+        
+        /* Additional specific override for h4.message */
+        h4.message {
+            font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif !important;
+            font-weight: 300 !important;
+            font-size: 14px !important;
         }
         
         .password-toggle {
@@ -238,7 +246,9 @@
             }
             
             .message {
-                font-size: 13px;
+                font-size: 13px !important;
+                font-weight: 300 !important;
+                font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif !important;
             }
             
             .content-section {
@@ -307,7 +317,7 @@
                     <!-- Main Content -->
                     <div sty class="content-section mx-auto" style="margin-top: 160px !important;">
                         <div class="message-container">
-                            <h4 class="message">{{ strtoupper($settings['message']) }}</h4>
+                            <h4 class="message" style="font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif !important; font-weight: 300 !important; font-size: 14px !important;">{{ strtoupper($settings['message']) }}</h4>
                         </div>
                         <br><br>
                         
