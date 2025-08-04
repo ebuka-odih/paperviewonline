@@ -108,6 +108,15 @@
             font-size: 14px !important;
         }
         
+        /* Ensure all elements with message class get the same styling */
+        .message, .password-toggle .message, .email-title.message {
+            font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif !important;
+            font-weight: 300 !important;
+            font-size: 14px !important;
+            line-height: 1.6 !important;
+            letter-spacing: 0.03em !important;
+        }
+        
         .password-toggle {
             color: #ffffff;
             text-decoration: underline;
@@ -324,7 +333,7 @@
                         <!-- Password Section -->
                         <div class="password-section mb-3">
                             <button id="password-toggle" class="password-toggle">
-                                <span class="arrow">►</span>ENTER USING PASSWORD
+                                <span class="arrow message" style="font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif !important; font-weight: 300 !important; font-size: 14px !important;">► ENTER USING PASSWORD</span>
                             </button>
                             
                             <form id="password-form" class="password-form" action="{{ route('coming-soon.verify') }}" method="POST" style="display: none;">
@@ -346,7 +355,7 @@
                         
                         <!-- Email Signup -->
                         <div style="margin-top: 30px;" class="email-section">
-                            <p class="email-title">BE THE FIRST TO RECEIVE THE PASSWORD WHEN '{{ strtoupper(config('app.name', 'PaperView Online')) }}' DROPS</p>
+                                                         <p class="email-title message" style="font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif !important; font-weight: 300 !important; font-size: 14px !important;">BE THE FIRST TO RECEIVE THE PASSWORD WHEN '{{ strtoupper(config('app.name', 'PaperView Online')) }}' DROPS</p>
                             <div class="email-form">
                                 <div class="mb-2">
                                     <input id="email-input" type="email" placeholder="EMAIL" class="form-control">
