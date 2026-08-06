@@ -18,30 +18,7 @@
                         </div><!-- .nk-block-between -->
                     </div><!-- .nk-block-head -->
 
-                    <!-- Flash Messages -->
-                    @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <div class="alert-icon">
-                                <em class="icon ni ni-check-circle"></em>
-                            </div>
-                            <div class="alert-text">
-                                {{ session('success') }}
-                            </div>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-
-                    @if(session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <div class="alert-icon">
-                                <em class="icon ni ni-cross-circle"></em>
-                            </div>
-                            <div class="alert-text">
-                                {{ session('error') }}
-                            </div>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+                    {{-- Flash messages are rendered as toasts by admin.layout.app --}}
 
                     <div class="nk-block">
                         <div class="table-responsive">

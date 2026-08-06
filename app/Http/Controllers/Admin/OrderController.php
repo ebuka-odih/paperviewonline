@@ -348,13 +348,19 @@ class OrderController extends Controller
             ->orderBy('date')
             ->get();
 
-        // Monthly orders for the last 12 months
-        $monthlyOrders = Order::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, COUNT(*) as count, SUM(total) as revenue')
-            ->where('created_at', '>=', now()->subMonths(12))
-            ->groupBy('year', 'month')
-            ->orderBy('year')
-            ->orderBy('month')
-            ->get();
+        // Monthly orders for the last 12 months. Grouped in PHP because YEAR()
+        // and MONTH() are MySQL-only and blow up on SQLite.
+        $monthlyOrders = Order::where('created_at', '>=', now()->subMonths(12))
+            ->get(['created_at', 'total'])
+            ->groupBy(fn ($order) => $order->created_at->format('Y-m'))
+            ->map(fn ($orders, $key) => (object) [
+                'year' => (int) substr($key, 0, 4),
+                'month' => (int) substr($key, 5, 2),
+                'count' => $orders->count(),
+                'revenue' => (float) $orders->sum('total'),
+            ])
+            ->sortKeys()
+            ->values();
 
         // Top products
         $topProducts = \DB::table('order_items')

@@ -11,20 +11,29 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
     
     // Products
-    Route::resource('products', ProductController::class);
+    // Image + variant endpoints are declared before the resource so that their
+    // static segments are not swallowed by `products/{product}`.
     Route::post('products/{product}/images', [ProductController::class, 'storeImages'])->name('products.images.store');
+    Route::post('products/{product}/images/reorder', [ProductController::class, 'reorderImages'])->name('products.images.reorder');
     Route::delete('products/images/{image}', [ProductController::class, 'deleteImage'])->name('products.images.delete');
+    Route::post('products/images/{image}/featured', [ProductController::class, 'setFeaturedImage'])->name('products.images.featured');
+    Route::post('products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggle-status');
+    Route::post('products/{product}/toggle-featured', [ProductController::class, 'toggleFeatured'])->name('products.toggle-featured');
+    Route::resource('products', ProductController::class)->except(['show']);
     
     // Categories
     Route::resource('categories', CategoryController::class);
     
     // Orders
-    Route::resource('orders', OrderController::class);
+    // As above: `orders/analytics`, `orders/export` and `orders/bulk-update` must
+    // be registered before the resource, otherwise `orders/{order}` matches them
+    // first and model binding 404s on "analytics"/"export".
+    Route::get('orders/analytics', [OrderController::class, 'analytics'])->name('orders.analytics');
+    Route::get('orders/export', [OrderController::class, 'export'])->name('orders.export');
+    Route::post('orders/bulk-update', [OrderController::class, 'bulkUpdate'])->name('orders.bulk-update');
     Route::post('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
     Route::post('orders/{order}/payment-status', [OrderController::class, 'updatePaymentStatus'])->name('orders.update-payment-status');
-    Route::post('orders/bulk-update', [OrderController::class, 'bulkUpdate'])->name('orders.bulk-update');
-    Route::get('orders/export', [OrderController::class, 'export'])->name('orders.export');
-    Route::get('orders/analytics', [OrderController::class, 'analytics'])->name('orders.analytics');
+    Route::resource('orders', OrderController::class);
     
     // Coming Soon
     Route::get('coming-soon', [ComingSoonController::class, 'index'])->name('coming-soon.index');

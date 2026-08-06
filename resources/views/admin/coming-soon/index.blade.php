@@ -13,13 +13,7 @@
                     </div>
                 </div>
 
-                @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <em class="icon ni ni-check-circle"></em>
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-                @endif
+                {{-- Flash messages are rendered as toasts by admin.layout.app --}}
 
                 <div class="nk-block">
                     <div class="card">

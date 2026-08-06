@@ -23,12 +23,12 @@ class ImageService
 
         $options = array_merge($defaultOptions, $options);
 
-        // Generate unique filename
+        // Generate unique filename and store under it, so the `filename` column
+        // always matches the file actually written to disk.
         $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-        
-        // Store the image using Laravel 12's image store function
-        $path = $file->store($options['folder'], $options['disk']);
-        
+
+        $path = $file->storeAs($options['folder'], $filename, $options['disk']);
+
         // Create image record
         $image = Image::create([
             'filename' => $filename,
@@ -105,10 +105,10 @@ class ImageService
 
     public function setFeaturedImage($imageable, $imageId)
     {
-        // Remove existing featured image
-        $imageable->featuredImage()->update(['is_featured' => false]);
-        
-        // Set new featured image
+        // Clear the current cover, then promote the requested image. Scoped by
+        // the owner so this works for any imageable (product, variant, ...).
+        $imageable->images()->getQuery()->update(['is_featured' => false]);
+
         Image::where('id', $imageId)
             ->where('imageable_type', get_class($imageable))
             ->where('imageable_id', $imageable->id)

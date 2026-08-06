@@ -1,504 +1,341 @@
 @extends('admin.layout.app')
+@section('title', 'Dashboard')
 @section('content')
 
-    <div class="nk-content ">
-                <div class="container-fluid">
-                    <div class="nk-content-inner">
-                        <div class="nk-content-body">
-                            <div class="nk-block-head nk-block-head-sm">
-                                <div class="nk-block-between">
-                                    <div class="nk-block-head-content"><h4 class="nk-block-title page-title">
-                                            Dashboard</h4></div>
-                                </div>
+@php
+    $money = fn ($value) => '$' . number_format((float) $value, 2);
+    $trend = function ($value) {
+        if ($value === null) {
+            return ['icon' => 'arrow-long-up', 'class' => 'text-success', 'text' => 'new'];
+        }
+        if ($value > 0) {
+            return ['icon' => 'arrow-long-up', 'class' => 'text-success', 'text' => number_format($value, 1) . '%'];
+        }
+        if ($value < 0) {
+            return ['icon' => 'arrow-long-down', 'class' => 'text-danger', 'text' => number_format(abs($value), 1) . '%'];
+        }
+        return ['icon' => 'minus', 'class' => 'text-soft', 'text' => 'no change'];
+    };
+    $revenue = $trend($revenueTrend);
+    $week = $trend($weekTrend);
+    $orders = $trend($orderTrend);
+@endphp
+
+<div class="nk-content">
+    <div class="container-fluid">
+        <div class="nk-content-inner">
+            <div class="nk-content-body">
+
+                <div class="nk-block-head nk-block-head-sm">
+                    <div class="nk-block-between g-2">
+                        <div class="nk-block-head-content">
+                            <h3 class="nk-block-title page-title">Dashboard</h3>
+                            <p class="text-soft mb-0">A live view of your store — {{ now()->format('l, j F Y') }}</p>
+                        </div>
+                        <div class="nk-block-head-content">
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
+                                    <em class="icon ni ni-plus"></em><span>Add product</span>
+                                </a>
+                                <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-light">
+                                    <em class="icon ni ni-bag"></em><span>Orders</span>
+                                </a>
                             </div>
-                            <div class="nk-block">
-                                <div class="row g-gs">
-                                    <div class="col-xxl-4 col-md-6">
-                                        <div class="card is-dark h-100">
-                                            <div class="nk-ecwg nk-ecwg1">
-                                                <div class="card-inner">
-                                                    <div class="card-title-group">
-                                                        <div class="card-title"><h6 class="title">Total Sales</h6></div>
-                                                        <div class="card-tools"><a href="#" class="link">View Report</a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="data">
-                                                        <div class="amount">$74,958.49</div>
-                                                        <div class="info"><strong>$7,395.37</strong> in last month</div>
-                                                    </div>
-                                                    <div class="data"><h6 class="sub-title">This week so far</h6>
-                                                        <div class="data-group">
-                                                            <div class="amount">$1,338.72</div>
-                                                            <div class="info text-end"><span
-                                                                    class="change up text-danger"><em
-                                                                        class="icon ni ni-arrow-long-up"></em>4.63%</span><br><span>vs. last week</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="nk-ck-wrap mt-auto overflow-hidden rounded-bottom">
-                                                    <div class="nk-ecwg1-ck">
-                                                        <canvas class="ecommerce-line-chart-s1"
-                                                                id="totalSales"></canvas>
-                                                    </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Things that need the admin's attention right now. --}}
+                @php
+                    $alerts = collect([
+                        $stats['orders_pending'] > 0 ? [
+                            'icon' => 'clock', 'class' => 'warning',
+                            'text' => $stats['orders_pending'] . ' ' . Str::plural('order', $stats['orders_pending']) . ' waiting to be processed',
+                            'url' => route('admin.orders.index') . '?status=pending', 'cta' => 'Review',
+                        ] : null,
+                        $stats['out_of_stock'] > 0 ? [
+                            'icon' => 'alert-circle', 'class' => 'danger',
+                            'text' => $stats['out_of_stock'] . ' ' . Str::plural('product', $stats['out_of_stock']) . ' out of stock',
+                            'url' => route('admin.products.index', ['stock' => 'out']), 'cta' => 'Restock',
+                        ] : null,
+                        $stats['products_missing_images'] > 0 ? [
+                            'icon' => 'img', 'class' => 'info',
+                            'text' => $stats['products_missing_images'] . ' ' . Str::plural('product', $stats['products_missing_images']) . ' have no photos',
+                            'url' => route('admin.products.index'), 'cta' => 'Add photos',
+                        ] : null,
+                    ])->filter();
+                @endphp
+
+                @if($alerts->isNotEmpty())
+                    <div class="nk-block nk-block-sm">
+                        <div class="row g-3">
+                            @foreach($alerts as $alert)
+                                <div class="col-md-4">
+                                    <a href="{{ $alert['url'] }}" class="card card-bordered h-100 text-decoration-none">
+                                        <div class="card-inner d-flex align-items-center gap-3 py-3">
+                                            <em class="icon ni ni-{{ $alert['icon'] }} text-{{ $alert['class'] }} fs-4"></em>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-medium text-dark small">{{ $alert['text'] }}</div>
+                                                <div class="text-soft" style="font-size:.75rem">{{ $alert['cta'] }} &rarr;</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                <div class="nk-block">
+                    <div class="row g-gs">
+                        {{-- Revenue --}}
+                        <div class="col-xxl-4 col-md-6">
+                            <div class="card is-dark h-100">
+                                <div class="nk-ecwg nk-ecwg1">
+                                    <div class="card-inner">
+                                        <div class="card-title-group">
+                                            <div class="card-title"><h6 class="title">Paid revenue</h6></div>
+                                            <div class="card-tools">
+                                                <a href="{{ route('admin.orders.analytics') }}" class="link">View report</a>
+                                            </div>
+                                        </div>
+                                        <div class="data">
+                                            <div class="amount">{{ $money($stats['revenue_total']) }}</div>
+                                            <div class="info"><strong>{{ $money($stats['revenue_this_month']) }}</strong> this month</div>
+                                        </div>
+                                        <div class="data">
+                                            <h6 class="sub-title">This week so far</h6>
+                                            <div class="data-group">
+                                                <div class="amount">{{ $money($stats['revenue_this_week']) }}</div>
+                                                <div class="info text-end">
+                                                    <span class="change {{ $week['class'] }}">
+                                                        <em class="icon ni ni-{{ $week['icon'] }}"></em>{{ $week['text'] }}
+                                                    </span><br><span>vs. last week</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xxl-4 col-md-6">
-                                        <div class="card h-100">
-                                            <div class="nk-ecwg nk-ecwg2">
-                                                <div class="card-inner">
-                                                    <div class="card-title-group mt-n1">
-                                                        <div class="card-title"><h6 class="title">Averarge order</h6>
-                                                        </div>
-                                                        <div class="card-tools me-n1">
-                                                            <div class="dropdown"><a href="#"
-                                                                                     class="dropdown-toggle btn btn-icon btn-trigger"
-                                                                                     data-bs-toggle="dropdown"><em
-                                                                        class="icon ni ni-more-h"></em></a>
-                                                                <div
-                                                                    class="dropdown-menu dropdown-menu-sm dropdown-menu-end">
-                                                                    <ul class="link-list-opt no-bdr">
-                                                                        <li><a href="#"
-                                                                               class="active"><span>15 Days</span></a>
-                                                                        </li>
-                                                                        <li><a href="#"><span>30 Days</span></a></li>
-                                                                        <li><a href="#"><span>3 Months</span></a></li>
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="data">
-                                                        <div class="data-group">
-                                                            <div class="amount">$463.35</div>
-                                                            <div class="info text-end"><span
-                                                                    class="change up text-danger"><em
-                                                                        class="icon ni ni-arrow-long-up"></em>4.63%</span><br><span>vs. last week</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <h6 class="sub-title">Orders over time</h6></div>
-                                                <div class="nk-ecwg2-ck">
-                                                    <canvas class="ecommerce-bar-chart-s1" id="averargeOrder"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4">
-                                        <div class="row g-gs">
-                                            <div class="col-xxl-12 col-md-6">
-                                                <div class="card">
-                                                    <div class="nk-ecwg nk-ecwg3">
-                                                        <div class="card-inner pb-2">
-                                                            <div class="card-title-group">
-                                                                <div class="card-title"><h6 class="title">Orders</h6>
-                                                                </div>
-                                                            </div>
-                                                            <div class="data">
-                                                                <div class="data-group">
-                                                                    <div class="amount">329</div>
-                                                                    <div class="info text-end"><span
-                                                                            class="change up text-danger"><em
-                                                                                class="icon ni ni-arrow-long-up"></em>4.63%</span><br><span>vs. last week</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-ck-wrap mt-auto overflow-hidden rounded-bottom">
-                                                            <div class="nk-ecwg3-ck">
-                                                                <canvas class="ecommerce-line-chart-s1"
-                                                                        id="totalOrders"></canvas>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xxl-12 col-md-6">
-                                                <div class="card">
-                                                    <div class="nk-ecwg nk-ecwg3">
-                                                        <div class="card-inner pb-2">
-                                                            <div class="card-title-group">
-                                                                <div class="card-title"><h6 class="title">Customers</h6>
-                                                                </div>
-                                                            </div>
-                                                            <div class="data">
-                                                                <div class="data-group">
-                                                                    <div class="amount">194</div>
-                                                                    <div class="info text-end"><span
-                                                                            class="change up text-danger"><em
-                                                                                class="icon ni ni-arrow-long-up"></em>4.63%</span><br><span>vs. last week</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-ck-wrap mt-auto overflow-hidden rounded-bottom">
-                                                            <div class="nk-ecwg3-ck">
-                                                                <canvas class="ecommerce-line-chart-s1"
-                                                                        id="totalCustomers"></canvas>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-8">
-                                        <div class="card card-full">
-                                            <div class="card-inner">
-                                                <div class="card-title-group">
-                                                    <div class="card-title"><h6 class="title">Recent Orders</h6></div>
-                                                </div>
-                                            </div>
-                                            <div class="nk-tb-list mt-n2">
-                                                <div class="nk-tb-item nk-tb-head">
-                                                    <div class="nk-tb-col"><span>Order No.</span></div>
-                                                    <div class="nk-tb-col tb-col-sm"><span>Customer</span></div>
-                                                    <div class="nk-tb-col tb-col-md"><span>Date</span></div>
-                                                    <div class="nk-tb-col"><span>Amount</span></div>
-                                                    <div class="nk-tb-col"><span
-                                                            class="d-none d-sm-inline">Status</span></div>
-                                                </div>
-                                                <div class="nk-tb-item">
-                                                    <div class="nk-tb-col"><span class="tb-lead"><a href="#">#95954</a></span>
-                                                    </div>
-                                                    <div class="nk-tb-col tb-col-sm">
-                                                        <div class="user-card">
-                                                            <div class="user-avatar sm bg-purple-dim"><span>AB</span>
-                                                            </div>
-                                                            <div class="user-name"><span class="tb-lead">Abu Bin Ishtiyak</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="nk-tb-col tb-col-md"><span
-                                                            class="tb-sub">02/11/2020</span></div>
-                                                    <div class="nk-tb-col"><span
-                                                            class="tb-sub tb-amount">4,596.75 <span>USD</span></span>
-                                                    </div>
-                                                    <div class="nk-tb-col"><span
-                                                            class="badge badge-dot badge-dot-xs bg-success">Paid</span>
-                                                    </div>
-                                                </div>
-                                                <div class="nk-tb-item">
-                                                    <div class="nk-tb-col"><span class="tb-lead"><a href="#">#95850</a></span>
-                                                    </div>
-                                                    <div class="nk-tb-col tb-col-sm">
-                                                        <div class="user-card">
-                                                            <div class="user-avatar sm bg-azure-dim"><span>DE</span>
-                                                            </div>
-                                                            <div class="user-name"><span
-                                                                    class="tb-lead">Desiree Edwards</span></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="nk-tb-col tb-col-md"><span
-                                                            class="tb-sub">02/02/2020</span></div>
-                                                    <div class="nk-tb-col"><span class="tb-sub tb-amount">596.75 <span>USD</span></span>
-                                                    </div>
-                                                    <div class="nk-tb-col"><span
-                                                            class="badge badge-dot badge-dot-xs bg-danger">Canceled</span>
-                                                    </div>
-                                                </div>
-                                                <div class="nk-tb-item">
-                                                    <div class="nk-tb-col"><span class="tb-lead"><a href="#">#95812</a></span>
-                                                    </div>
-                                                    <div class="nk-tb-col tb-col-sm">
-                                                        <div class="user-card">
-                                                            <div class="user-avatar sm bg-warning-dim"><img
-                                                                    src="/demo2/images/avatar/b-sm.jpg" alt=""></div>
-                                                            <div class="user-name"><span
-                                                                    class="tb-lead">Blanca Schultz</span></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="nk-tb-col tb-col-md"><span
-                                                            class="tb-sub">02/01/2020</span></div>
-                                                    <div class="nk-tb-col"><span class="tb-sub tb-amount">199.99 <span>USD</span></span>
-                                                    </div>
-                                                    <div class="nk-tb-col"><span
-                                                            class="badge badge-dot badge-dot-xs bg-success">Paid</span>
-                                                    </div>
-                                                </div>
-                                                <div class="nk-tb-item">
-                                                    <div class="nk-tb-col"><span class="tb-lead"><a href="#">#95256</a></span>
-                                                    </div>
-                                                    <div class="nk-tb-col tb-col-sm">
-                                                        <div class="user-card">
-                                                            <div class="user-avatar sm bg-purple-dim"><span>NL</span>
-                                                            </div>
-                                                            <div class="user-name"><span
-                                                                    class="tb-lead">Naomi Lawrence</span></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="nk-tb-col tb-col-md"><span
-                                                            class="tb-sub">01/29/2020</span></div>
-                                                    <div class="nk-tb-col"><span class="tb-sub tb-amount">1099.99 <span>USD</span></span>
-                                                    </div>
-                                                    <div class="nk-tb-col"><span
-                                                            class="badge badge-dot badge-dot-xs bg-success">Paid</span>
-                                                    </div>
-                                                </div>
-                                                <div class="nk-tb-item">
-                                                    <div class="nk-tb-col"><span class="tb-lead"><a href="#">#95135</a></span>
-                                                    </div>
-                                                    <div class="nk-tb-col tb-col-sm">
-                                                        <div class="user-card">
-                                                            <div class="user-avatar sm bg-success-dim"><span>CH</span>
-                                                            </div>
-                                                            <div class="user-name"><span
-                                                                    class="tb-lead">Cassandra Hogan</span></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="nk-tb-col tb-col-md"><span
-                                                            class="tb-sub">01/29/2020</span></div>
-                                                    <div class="nk-tb-col"><span class="tb-sub tb-amount">1099.99 <span>USD</span></span>
-                                                    </div>
-                                                    <div class="nk-tb-col"><span
-                                                            class="badge badge-dot badge-dot-xs bg-warning">Due</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-md-6">
-                                        <div class="card h-100">
-                                            <div class="card-inner">
-                                                <div class="card-title-group mb-2">
-                                                    <div class="card-title"><h6 class="title">Top products</h6></div>
-                                                    <div class="card-tools">
-                                                        <div class="dropdown"><a href="#"
-                                                                                 class="dropdown-toggle link link-light link-sm dropdown-indicator"
-                                                                                 data-bs-toggle="dropdown">Weekly</a>
-                                                            <div
-                                                                class="dropdown-menu dropdown-menu-sm dropdown-menu-end">
-                                                                <ul class="link-list-opt no-bdr">
-                                                                    <li><a href="#"><span>Daily</span></a></li>
-                                                                    <li><a href="#"
-                                                                           class="active"><span>Weekly</span></a></li>
-                                                                    <li><a href="#"><span>Monthly</span></a></li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <ul class="nk-top-products">
-                                                    <li class="item">
-                                                        <div class="thumb"><img src="/demo2/images/product/a.png"
-                                                                                alt=""></div>
-                                                        <div class="info">
-                                                            <div class="title">Pink Fitness Tracker</div>
-                                                            <div class="price">$99.00</div>
-                                                        </div>
-                                                        <div class="total">
-                                                            <div class="amount">$990.00</div>
-                                                            <div class="count">10 Sold</div>
-                                                        </div>
-                                                    </li>
-                                                    <li class="item">
-                                                        <div class="thumb"><img src="/demo2/images/product/b.png"
-                                                                                alt=""></div>
-                                                        <div class="info">
-                                                            <div class="title">Purple Smartwatch</div>
-                                                            <div class="price">$99.00</div>
-                                                        </div>
-                                                        <div class="total">
-                                                            <div class="amount">$990.00</div>
-                                                            <div class="count">10 Sold</div>
-                                                        </div>
-                                                    </li>
-                                                    <li class="item">
-                                                        <div class="thumb"><img src="/demo2/images/product/c.png"
-                                                                                alt=""></div>
-                                                        <div class="info">
-                                                            <div class="title">Black Mi Band Smartwatch</div>
-                                                            <div class="price">$99.00</div>
-                                                        </div>
-                                                        <div class="total">
-                                                            <div class="amount">$990.00</div>
-                                                            <div class="count">10 Sold</div>
-                                                        </div>
-                                                    </li>
-                                                    <li class="item">
-                                                        <div class="thumb"><img src="/demo2/images/product/d.png"
-                                                                                alt=""></div>
-                                                        <div class="info">
-                                                            <div class="title">Black Headphones</div>
-                                                            <div class="price">$99.00</div>
-                                                        </div>
-                                                        <div class="total">
-                                                            <div class="amount">$990.00</div>
-                                                            <div class="count">10 Sold</div>
-                                                        </div>
-                                                    </li>
-                                                    <li class="item">
-                                                        <div class="thumb"><img src="/demo2/images/product/e.png"
-                                                                                alt=""></div>
-                                                        <div class="info">
-                                                            <div class="title">iPhone 7 Headphones</div>
-                                                            <div class="price">$99.00</div>
-                                                        </div>
-                                                        <div class="total">
-                                                            <div class="amount">$990.00</div>
-                                                            <div class="count">10 Sold</div>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-3 col-md-6">
-                                        <div class="card h-100">
-                                            <div class="card-inner">
-                                                <div class="card-title-group mb-2">
-                                                    <div class="card-title"><h6 class="title">Store Statistics</h6>
-                                                    </div>
-                                                </div>
-                                                <ul class="nk-store-statistics">
-                                                    <li class="item">
-                                                        <div class="info">
-                                                            <div class="title">Orders</div>
-                                                            <div class="count">1,795</div>
-                                                        </div>
-                                                        <em class="icon bg-primary-dim ni ni-bag"></em></li>
-                                                    <li class="item">
-                                                        <div class="info">
-                                                            <div class="title">Customers</div>
-                                                            <div class="count">2,327</div>
-                                                        </div>
-                                                        <em class="icon bg-info-dim ni ni-users"></em></li>
-                                                    <li class="item">
-                                                        <div class="info">
-                                                            <div class="title">Products</div>
-                                                            <div class="count">674</div>
-                                                        </div>
-                                                        <em class="icon bg-pink-dim ni ni-box"></em></li>
-                                                    <li class="item">
-                                                        <div class="info">
-                                                            <div class="title">Categories</div>
-                                                            <div class="count">68</div>
-                                                        </div>
-                                                        <em class="icon bg-purple-dim ni ni-server"></em></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-5 col-lg-6">
-                                        <div class="card card-full overflow-hidden">
-                                            <div class="nk-ecwg nk-ecwg4 h-100">
-                                                <div class="card-inner flex-grow-1">
-                                                    <div class="card-title-group mb-4">
-                                                        <div class="card-title"><h6 class="title">Traffic Sources</h6>
-                                                        </div>
-                                                        <div class="card-tools">
-                                                            <div class="dropdown"><a href="#"
-                                                                                     class="dropdown-toggle link link-light link-sm dropdown-indicator"
-                                                                                     data-bs-toggle="dropdown">30
-                                                                    Days</a>
-                                                                <div
-                                                                    class="dropdown-menu dropdown-menu-sm dropdown-menu-end">
-                                                                    <ul class="link-list-opt no-bdr">
-                                                                        <li><a href="#"><span>15 Days</span></a></li>
-                                                                        <li><a href="#"
-                                                                               class="active"><span>30 Days</span></a>
-                                                                        </li>
-                                                                        <li><a href="#"><span>3 Months</span></a></li>
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="data-group">
-                                                        <div class="nk-ecwg4-ck">
-                                                            <canvas class="ecommerce-doughnut-s1"
-                                                                    id="trafficSources"></canvas>
-                                                        </div>
-                                                        <ul class="nk-ecwg4-legends">
-                                                            <li>
-                                                                <div class="title"><span class="dot dot-lg sq"
-                                                                                         data-bg="#9cabff"></span><span>Organic Search</span>
-                                                                </div>
-                                                                <div class="amount amount-xs">4,305</div>
-                                                            </li>
-                                                            <li>
-                                                                <div class="title"><span class="dot dot-lg sq"
-                                                                                         data-bg="#ffa9ce"></span><span>Referrals</span>
-                                                                </div>
-                                                                <div class="amount amount-xs">482</div>
-                                                            </li>
-                                                            <li>
-                                                                <div class="title"><span class="dot dot-lg sq"
-                                                                                         data-bg="#b8acff"></span><span>Social Media</span>
-                                                                </div>
-                                                                <div class="amount amount-xs">859</div>
-                                                            </li>
-                                                            <li>
-                                                                <div class="title"><span class="dot dot-lg sq"
-                                                                                         data-bg="#f9db7b"></span><span>Others</span>
-                                                                </div>
-                                                                <div class="amount amount-xs">138</div>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="card-inner card-inner-md bg-light">
-                                                    <div class="card-note"><em class="icon ni ni-info-fill"></em><span>Traffic channels have beed generating the most traffics over past days.</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-4 col-lg-6">
-                                        <div class="card h-100">
-                                            <div class="nk-ecwg nk-ecwg5">
-                                                <div class="card-inner">
-                                                    <div class="card-title-group align-start pb-3 g-2">
-                                                        <div class="card-title"><h6 class="title">Store Visitors</h6>
-                                                        </div>
-                                                        <div class="card-tools"><em class="card-hint icon ni ni-help"
-                                                                                    data-bs-toggle="tooltip"
-                                                                                    data-bs-placement="left"
-                                                                                    title="Users of this month"></em>
-                                                        </div>
-                                                    </div>
-                                                    <div class="data-group">
-                                                        <div class="data">
-                                                            <div class="title">Monthly</div>
-                                                            <div class="amount amount-sm">9.28K</div>
-                                                            <div class="change up"><em
-                                                                    class="icon ni ni-arrow-long-up"></em>4.63%
-                                                            </div>
-                                                        </div>
-                                                        <div class="data">
-                                                            <div class="title">Weekly</div>
-                                                            <div class="amount amount-sm">2.69K</div>
-                                                            <div class="change down"><em
-                                                                    class="icon ni ni-arrow-long-down"></em>1.92%
-                                                            </div>
-                                                        </div>
-                                                        <div class="data">
-                                                            <div class="title">Daily (Avg)</div>
-                                                            <div class="amount amount-sm">0.94K</div>
-                                                            <div class="change up"><em
-                                                                    class="icon ni ni-arrow-long-up"></em>3.45%
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="nk-ecwg5-ck">
-                                                        <canvas class="ecommerce-line-chart-s4"
-                                                                id="storeVisitors"></canvas>
-                                                    </div>
-                                                    <div class="chart-label-group">
-                                                        <div class="chart-label">01 Jul, 2020</div>
-                                                        <div class="chart-label">30 Jul, 2020</div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                    <div class="nk-ck-wrap mt-auto overflow-hidden rounded-bottom">
+                                        <div class="nk-ecwg1-ck">
+                                            <canvas id="pvRevenueChart"></canvas>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        {{-- Orders --}}
+                        <div class="col-xxl-4 col-md-6">
+                            <div class="card h-100">
+                                <div class="card-inner">
+                                    <div class="card-title-group mb-2">
+                                        <div class="card-title"><h6 class="title">Orders</h6></div>
+                                        <div class="card-tools">
+                                            <a href="{{ route('admin.orders.index') }}" class="link link-sm">All orders</a>
+                                        </div>
+                                    </div>
+                                    <div class="pv-stat-value">{{ number_format($stats['orders_total']) }}</div>
+                                    <div class="pv-stat-label mb-3">
+                                        {{ number_format($stats['orders_this_month']) }} this month
+                                        <span class="change {{ $orders['class'] }} ms-1">
+                                            <em class="icon ni ni-{{ $orders['icon'] }}"></em>{{ $orders['text'] }}
+                                        </span>
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        @foreach(['pending' => 'warning', 'processing' => 'info', 'shipped' => 'primary', 'delivered' => 'success', 'cancelled' => 'danger'] as $status => $colour)
+                                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+                                                <a href="{{ route('admin.orders.index') }}?status={{ $status }}" class="text-soft text-capitalize small text-decoration-none">
+                                                    <span class="badge bg-{{ $colour }} me-2" style="width:.5rem;height:.5rem;padding:0;border-radius:50%;display:inline-block"></span>{{ $status }}
+                                                </a>
+                                                <span class="fw-medium small">{{ number_format($ordersByStatus[$status] ?? 0) }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Catalogue + customers --}}
+                        <div class="col-xxl-4">
+                            <div class="row g-gs h-100">
+                                @php
+                                    $tiles = [
+                                        ['label' => 'Average order', 'value' => $money($stats['average_order']), 'hint' => 'across paid orders', 'icon' => 'coins', 'url' => route('admin.orders.analytics')],
+                                        ['label' => 'Customers', 'value' => number_format($stats['customers_total']), 'hint' => '+' . number_format($stats['customers_this_month']) . ' this month', 'icon' => 'users', 'url' => null],
+                                        ['label' => 'Products', 'value' => number_format($stats['products_total']), 'hint' => $stats['products_inactive'] . ' inactive', 'icon' => 'package', 'url' => route('admin.products.index')],
+                                        ['label' => 'Low stock', 'value' => number_format($stats['low_stock']), 'hint' => '10 or fewer left', 'icon' => 'alert', 'url' => route('admin.products.index', ['stock' => 'low'])],
+                                    ];
+                                @endphp
+                                @foreach($tiles as $tile)
+                                    <div class="col-6">
+                                        <div class="card card-bordered h-100 pv-stat-card">
+                                            <div class="card-inner py-3">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <div class="pv-stat-label">{{ $tile['label'] }}</div>
+                                                        <div class="pv-stat-value">{{ $tile['value'] }}</div>
+                                                        <div class="text-soft" style="font-size:.75rem">{{ $tile['hint'] }}</div>
+                                                    </div>
+                                                    <em class="icon ni ni-{{ $tile['icon'] }} text-soft"></em>
+                                                </div>
+                                                @if($tile['url'])
+                                                    <a href="{{ $tile['url'] }}" class="stretched-link" aria-label="{{ $tile['label'] }}"></a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        {{-- Recent orders --}}
+                        <div class="col-lg-7">
+                            <div class="card card-bordered h-100">
+                                <div class="card-inner border-bottom">
+                                    <div class="card-title-group">
+                                        <div class="card-title"><h6 class="title mb-0">Recent orders</h6></div>
+                                        <div class="card-tools"><a href="{{ route('admin.orders.index') }}" class="link link-sm">View all</a></div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="small">Order</th>
+                                                <th class="small">Customer</th>
+                                                <th class="small">Status</th>
+                                                <th class="small text-end">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse($recentOrders as $order)
+                                                <tr>
+                                                    <td>
+                                                        <a href="{{ route('admin.orders.index') }}?search={{ $order->order_number }}" class="fw-medium small">
+                                                            #{{ $order->order_number ?? Str::limit($order->id, 8, '') }}
+                                                        </a>
+                                                        <div class="text-soft" style="font-size:.75rem">{{ $order->created_at->diffForHumans() }}</div>
+                                                    </td>
+                                                    <td class="small">{{ $order->shipping_name ?? $order->user->name ?? 'Guest' }}</td>
+                                                    <td>
+                                                        <span class="badge bg-outline-{{ ['pending' => 'warning', 'processing' => 'info', 'shipped' => 'primary', 'delivered' => 'success', 'cancelled' => 'danger'][$order->status] ?? 'secondary' }} text-capitalize">
+                                                            {{ $order->status }}
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-end small fw-medium">{{ $money($order->total) }}</td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="4" class="text-center text-soft py-4">No orders yet.</td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Best sellers + low stock --}}
+                        <div class="col-lg-5">
+                            <div class="card card-bordered mb-3">
+                                <div class="card-inner border-bottom">
+                                    <h6 class="title mb-0">Best sellers</h6>
+                                </div>
+                                <ul class="list-unstyled mb-0">
+                                    @forelse($topProducts as $row)
+                                        <li class="pv-list-row">
+                                            <img src="{{ $row->product->featured_image_url ?? $row->product->images->first()?->url ?? asset('assets/images/product/placeholder.svg') }}"
+                                                 alt="" class="pv-thumb">
+                                            <div class="pv-list-main">
+                                                <a href="{{ route('admin.products.edit', $row->product) }}" class="d-block text-truncate fw-medium small">{{ $row->product->name }}</a>
+                                                <span class="text-soft" style="font-size:.75rem">{{ number_format($row->units) }} sold</span>
+                                            </div>
+                                            <span class="fw-medium small text-nowrap">{{ $money($row->revenue) }}</span>
+                                        </li>
+                                    @empty
+                                        <li class="px-4 py-4 text-center text-soft small">No sales recorded yet.</li>
+                                    @endforelse
+                                </ul>
+                            </div>
+
+                            <div class="card card-bordered">
+                                <div class="card-inner border-bottom">
+                                    <div class="card-title-group">
+                                        <h6 class="title mb-0">Needs restocking</h6>
+                                        <a href="{{ route('admin.products.index', ['stock' => 'low']) }}" class="link link-sm">View all</a>
+                                    </div>
+                                </div>
+                                <ul class="list-unstyled mb-0">
+                                    @forelse($lowStockProducts as $product)
+                                        <li class="pv-list-row">
+                                            <div class="pv-list-main">
+                                                <a href="{{ route('admin.products.edit', $product) }}" class="d-block text-truncate fw-medium small">{{ $product->name }}</a>
+                                                <span class="text-soft" style="font-size:.75rem">{{ $product->category->name ?? 'Uncategorised' }}</span>
+                                            </div>
+                                            <span class="badge bg-{{ $product->stock <= 0 ? 'danger' : 'warning' }} text-nowrap">{{ $product->stock }} left</span>
+                                        </li>
+                                    @empty
+                                        <li class="px-4 py-4 text-center text-soft small">Every product is well stocked.</li>
+                                    @endforelse
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+    (function () {
+        var canvas = document.getElementById('pvRevenueChart');
+        if (!canvas || typeof Chart === 'undefined') return;
+
+        var labels = @json($salesSeries['labels']);
+        var values = @json($salesSeries['values']);
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Revenue',
+                    data: values,
+                    tension: 0.3,
+                    borderWidth: 2,
+                    borderColor: '#8ea6ff',
+                    backgroundColor: 'rgba(142, 166, 255, 0.25)',
+                    pointRadius: 3,
+                    pointBorderColor: 'transparent',
+                    pointBackgroundColor: 'transparent',
+                    pointHoverRadius: 4,
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#8ea6ff'
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                legend: { display: false },
+                tooltips: {
+                    backgroundColor: '#1c2b46',
+                    displayColors: false,
+                    titleFontSize: 10,
+                    bodyFontSize: 11,
+                    callbacks: {
+                        label: function (item) { return '$' + Number(item.yLabel).toFixed(2); }
+                    }
+                },
+                scales: {
+                    yAxes: [{ display: false, ticks: { beginAtZero: true } }],
+                    xAxes: [{ display: false, gridLines: { color: 'transparent' } }]
+                }
+            }
+        });
+    })();
+</script>
+@endpush
 
 @endsection

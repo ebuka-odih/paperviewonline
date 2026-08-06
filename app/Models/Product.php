@@ -69,7 +69,15 @@ class Product extends Model
         return $this->morphMany(Image::class, 'imageable')->orderBy('sort_order');
     }
 
+    public function variants(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class)->orderBy('sort_order');
+    }
 
+    public function activeVariants(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class)->where('is_active', true)->orderBy('sort_order');
+    }
 
     public function featuredImage(): MorphMany
     {
@@ -119,5 +127,41 @@ class Product extends Model
     public function incrementViews()
     {
         $this->increment('views');
+    }
+
+    public function getHasVariantsAttribute()
+    {
+        return $this->variants()->exists();
+    }
+
+    /**
+     * Distinct colours across the product's variants, keyed by colour name.
+     */
+    public function getVariantColorsAttribute()
+    {
+        return $this->variants
+            ->whereNotNull('color')
+            ->unique('color')
+            ->mapWithKeys(fn ($variant) => [$variant->color => $variant->color_hex]);
+    }
+
+    public function getVariantSizesAttribute()
+    {
+        return $this->variants
+            ->whereNotNull('size')
+            ->pluck('size')
+            ->unique()
+            ->values();
+    }
+
+    /**
+     * Keep the product's own stock column in sync with its variants so that the
+     * cart and checkout, which read `products.stock`, stay correct.
+     */
+    public function syncStockFromVariants(): void
+    {
+        if ($this->variants()->exists()) {
+            $this->forceFill(['stock' => (int) $this->variants()->sum('stock')])->saveQuietly();
+        }
     }
 }

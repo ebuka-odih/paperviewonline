@@ -98,28 +98,30 @@ class Order extends Model
 
     public function getStatusBadgeAttribute(): string
     {
+        // Bootstrap classes — these badges are rendered by the admin panel,
+        // which is Bootstrap/DashLite, not Tailwind.
         $badges = [
-            'pending' => 'bg-yellow-900/50 text-yellow-300',
-            'processing' => 'bg-blue-900/50 text-blue-300',
-            'shipped' => 'bg-purple-900/50 text-purple-300',
-            'delivered' => 'bg-green-900/50 text-green-300',
-            'cancelled' => 'bg-red-900/50 text-red-300',
-            'refunded' => 'bg-gray-900/50 text-gray-300',
+            'pending' => 'bg-warning',
+            'processing' => 'bg-info',
+            'shipped' => 'bg-primary',
+            'delivered' => 'bg-success',
+            'cancelled' => 'bg-danger',
+            'refunded' => 'bg-secondary',
         ];
 
-        return $badges[$this->status] ?? 'bg-gray-900/50 text-gray-300';
+        return $badges[$this->status] ?? 'bg-secondary';
     }
 
     public function getPaymentStatusBadgeAttribute(): string
     {
         $badges = [
-            'pending' => 'bg-yellow-900/50 text-yellow-300',
-            'paid' => 'bg-green-900/50 text-green-300',
-            'failed' => 'bg-red-900/50 text-red-300',
-            'refunded' => 'bg-gray-900/50 text-gray-300',
+            'pending' => 'bg-warning',
+            'paid' => 'bg-success',
+            'failed' => 'bg-danger',
+            'refunded' => 'bg-secondary',
         ];
 
-        return $badges[$this->payment_status] ?? 'bg-gray-900/50 text-gray-300';
+        return $badges[$this->payment_status] ?? 'bg-secondary';
     }
 
     public function getIsPaidAttribute(): bool
