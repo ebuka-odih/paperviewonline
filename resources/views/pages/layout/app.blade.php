@@ -68,8 +68,11 @@
     <header class="sticky top-0 z-50 bg-black bg-opacity-90 w-full flex items-center justify-between px-8 py-4 shadow-md">
         <!-- Logo -->
         <div class="flex items-center">
-            <a href="{{ route('index') }}" class="text-white hover:text-[#65644A] transition-colors">
-                <h1>{{ env('APP_NAME') }}</h1>
+            <a href="{{ route('index') }}" class="block hover:opacity-80 transition-opacity" aria-label="{{ env('APP_NAME') }} — home">
+                {{-- logo-trimmed.png: img/logo.png with its transparent padding cropped off,
+                     so the height class matches the wordmark's actual height --}}
+                <img src="{{ asset('img/logo-trimmed.png') }}" alt="{{ env('APP_NAME') }}"
+                     width="900" height="309" class="h-8 md:h-9 w-auto">
             </a>
         </div>
         <!-- Center (empty or site name) -->
@@ -96,7 +99,13 @@
 
     <!-- Footer Menu -->
     <footer class="w-full bg-black bg-opacity-90 py-4">
-        <div class="flex flex-wrap justify-center items-center gap-8 text-white text-sm font-semibold">
+        <div class="flex justify-center">
+            <a href="{{ route('index') }}" class="block hover:opacity-80 transition-opacity" aria-label="{{ env('APP_NAME') }} — home">
+                <img src="{{ asset('img/logo-trimmed.png') }}" alt="{{ env('APP_NAME') }}" loading="lazy"
+                     width="900" height="309" class="h-10 md:h-12 w-auto">
+            </a>
+        </div>
+        <div class="mt-4 flex flex-wrap justify-center items-center gap-8 text-white text-sm font-semibold">
             <a href="#" class="hover:text-[#65644A] transition-colors">HELP</a>
             <a href="#" class="hover:text-[#65644A] transition-colors">PRIVACY</a>
             <a href="#" class="hover:text-[#65644A] transition-colors">TERMS</a>
