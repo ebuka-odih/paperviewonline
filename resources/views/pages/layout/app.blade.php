@@ -69,10 +69,13 @@
         <!-- Logo -->
         <div class="flex items-center">
             <a href="{{ route('index') }}" class="block hover:opacity-80 transition-opacity" aria-label="{{ env('APP_NAME') }} — home">
-                {{-- logo-trimmed.png: img/logo.png with its transparent padding cropped off,
-                     so the height class matches the wordmark's actual height --}}
-                <img src="{{ asset('img/logo-trimmed.png') }}" alt="{{ env('APP_NAME') }}"
-                     width="900" height="309" class="h-8 md:h-9 w-auto">
+                {{-- logo-signature.png is derived from img2/logo.png: cropped to the artwork,
+                     recoloured white for the black background, and scaled close to its display
+                     size with the alpha boosted so the hairline strokes survive the downscale.
+                     Don't swap in the 8334px source directly -- its strokes are 8px wide, so at
+                     header size they fall below a pixel and disappear. --}}
+                <img src="{{ asset('img/logo-signature.png') }}" alt="{{ env('APP_NAME') }}"
+                     width="407" height="192" class="h-12 md:h-16 w-auto">
             </a>
         </div>
         <!-- Center (empty or site name) -->
@@ -101,8 +104,8 @@
     <footer class="w-full bg-black bg-opacity-90 py-4">
         <div class="flex justify-center">
             <a href="{{ route('index') }}" class="block hover:opacity-80 transition-opacity" aria-label="{{ env('APP_NAME') }} — home">
-                <img src="{{ asset('img/logo-trimmed.png') }}" alt="{{ env('APP_NAME') }}" loading="lazy"
-                     width="900" height="309" class="h-10 md:h-12 w-auto">
+                <img src="{{ asset('img/logo-signature.png') }}" alt="{{ env('APP_NAME') }}" loading="lazy"
+                     width="407" height="192" class="h-20 md:h-24 w-auto">
             </a>
         </div>
         <div class="mt-4 flex flex-wrap justify-center items-center gap-8 text-white text-sm font-semibold">
