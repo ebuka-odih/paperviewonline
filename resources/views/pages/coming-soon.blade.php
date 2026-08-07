@@ -330,7 +330,8 @@
                         </div>
                         <br><br>
                         
-                        <!-- Password Section -->
+                        <!-- Password Section: only when the admin has asked visitors for a passcode -->
+                        @if (\App\Models\Setting::comingSoonPasscodeRequired())
                         <div class="password-section mb-3">
                             <button id="password-toggle" class="password-toggle">
                                 <span class="arrow message" style="font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif !important; font-weight: 300 !important; font-size: 14px !important;">► ENTER USING PASSWORD</span>
@@ -351,8 +352,9 @@
                                 </div>
                             </form>
                         </div>
+                        @endif
                         <br>
-                        
+
                         <!-- Email Signup -->
                         <div style="margin-top: 30px;" class="email-section">
                                                          <p class="email-title message" style="font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif !important; font-weight: 300 !important; font-size: 14px !important;">BE THE FIRST TO RECEIVE THE PASSWORD WHEN '{{ strtoupper(config('app.name', 'PaperView Online')) }}' DROPS</p>

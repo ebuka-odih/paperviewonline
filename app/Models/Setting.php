@@ -70,6 +70,10 @@ class Setting extends Model
 
     /**
      * Get coming soon settings
+     *
+     * These back the frontpage lock in the admin. `require_password` defaults to
+     * true so that existing installs -- which always showed the passcode box --
+     * keep behaving the same way after this option was introduced.
      */
     public static function getComingSoonSettings()
     {
@@ -77,6 +81,18 @@ class Setting extends Model
             'enabled' => self::getValue('coming_soon_enabled', false),
             'message' => self::getValue('coming_soon_message', 'We\'re working hard to bring you something amazing. Stay tuned!'),
             'password' => self::getValue('coming_soon_password', ''),
+            'require_password' => self::getValue('coming_soon_require_password', true),
         ];
+    }
+
+    /**
+     * Whether a visitor can unlock the frontpage by entering a passcode.
+     */
+    public static function comingSoonPasscodeRequired()
+    {
+        $settings = self::getComingSoonSettings();
+
+        // The stored value can be null as well as '', so cast before comparing.
+        return $settings['require_password'] && (string) $settings['password'] !== '';
     }
 }

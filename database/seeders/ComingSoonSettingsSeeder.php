@@ -22,6 +22,16 @@ class ComingSoonSettingsSeeder extends Seeder
                 'description' => 'Enable or disable the coming soon banner'
             ],
             [
+                'key' => 'coming_soon_require_password',
+                'value' => '1',
+                'type' => 'boolean',
+                'group' => 'coming_soon',
+                'description' => 'Whether visitors can enter a passcode to unlock the frontpage'
+            ],
+            // coming_soon_password is deliberately not seeded: these rows are written
+            // with updateOrCreate, so a default here would wipe a live passcode on
+            // every re-seed. getComingSoonSettings() already falls back to ''.
+            [
                 'key' => 'coming_soon_title',
                 'value' => 'Coming Soon',
                 'type' => 'string',

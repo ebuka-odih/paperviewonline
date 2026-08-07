@@ -65,8 +65,17 @@
                            </li>
                            <li class="nk-menu-item {{ request()->routeIs('admin.coming-soon.*') ? 'active current-page' : '' }}">
                               <a href="{{ route('admin.coming-soon.index') }}" class="nk-menu-link">
-                                 <span class="nk-menu-icon"><em class="icon ni ni-clock"></em></span>
-                                 <span class="nk-menu-text">Coming Soon</span>
+                                 <span class="nk-menu-icon"><em class="icon ni ni-lock-alt"></em></span>
+                                 <span class="nk-menu-text">Frontpage Lock</span>
+                                 @if (\App\Models\Setting::isComingSoonEnabled())
+                                    <span class="nk-menu-badge badge bg-danger">Locked</span>
+                                 @endif
+                              </a>
+                           </li>
+                           <li class="nk-menu-item {{ request()->routeIs('admin.settings.*') ? 'active current-page' : '' }}">
+                              <a href="{{ route('admin.settings.index') }}" class="nk-menu-link">
+                                 <span class="nk-menu-icon"><em class="icon ni ni-setting"></em></span>
+                                 <span class="nk-menu-text">Settings</span>
                               </a>
                            </li>
                            <li class="nk-menu-item">
@@ -120,6 +129,7 @@
                                     </div>
                                     <div class="dropdown-inner">
                                        <ul class="link-list">
+                                          <li><a href="{{ route('admin.settings.index') }}"><em class="icon ni ni-setting-alt"></em><span>Settings</span></a></li>
                                           <li><a href="{{ url('/') }}" target="_blank"><em class="icon ni ni-external-alt"></em><span>View storefront</span></a></li>
                                           <li>
                                              <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

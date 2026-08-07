@@ -36,10 +36,16 @@ class HomeController extends Controller
         $request->validate([
             'password' => 'required|string'
         ]);
-        
+
+        // Nothing to unlock if the frontpage is open, and no passcode to check if the
+        // admin has not asked visitors for one -- in both cases just send them home.
+        if (! Setting::isComingSoonEnabled() || ! Setting::comingSoonPasscodeRequired()) {
+            return redirect()->route('index');
+        }
+
         $settings = Setting::getComingSoonSettings();
-        
-        if ($settings['enabled'] && $request->password === $settings['password']) {
+
+        if (hash_equals((string) $settings['password'], (string) $request->password)) {
             // Store in session that user has bypassed coming soon
             session(['coming-soon-bypassed' => true]);
             

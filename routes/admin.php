@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ComingSoonController;
+use App\Http\Controllers\Admin\SettingsController;
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
@@ -35,8 +36,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('orders/{order}/payment-status', [OrderController::class, 'updatePaymentStatus'])->name('orders.update-payment-status');
     Route::resource('orders', OrderController::class);
     
-    // Coming Soon
+    // Frontpage lock (setting keys and route names stay `coming-soon` for
+    // compatibility with the rows already in the settings table).
     Route::get('coming-soon', [ComingSoonController::class, 'index'])->name('coming-soon.index');
     Route::put('coming-soon', [ComingSoonController::class, 'update'])->name('coming-soon.update');
     Route::post('coming-soon/toggle', [ComingSoonController::class, 'toggle'])->name('coming-soon.toggle');
+
+    // Settings
+    Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::put('settings/password', [SettingsController::class, 'updatePassword'])->name('settings.password.update');
 });
